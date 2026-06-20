@@ -280,13 +280,21 @@
     .toolbar { flex-direction: column; }
     #randomBtn { width: 100%; justify-content: center; }
   }
+  footer {
+    background: #0000FF;
+    color: rgba(255,255,255,0.75);
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.8rem;
+    margin-top: 3rem;
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div class="container" style="padding-top:0;padding-bottom:0;">
-    <h1>Dico Cyber</h1>
+    <h1><a href="#" id="homeLink" style="color:inherit;text-decoration:none;cursor:pointer;">Dico Cyber</a></h1>
     <p id="lastUpdate">Chargement…</p>
   </div>
 </header>
@@ -549,10 +557,21 @@ document.getElementById('randomBtn').addEventListener('click', () => {
   }, 50);
 });
 
+// Clic sur le titre → retour accueil
+document.getElementById('homeLink').addEventListener('click', e => {
+  e.preventDefault();
+  searchQuery = '';
+  currentLetter = 'ALL';
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+  render();
+});
+
 // Listener unique sur le container stable — ne se ré-attache pas à chaque render
 document.getElementById('entries').addEventListener('click', handleEntryClick);
 
 loadData();
 </script>
+<footer>© Auraponymous — 2026</footer>
 </body>
 </html>
