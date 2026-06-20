@@ -112,20 +112,21 @@
 
   /* Alpha tabs */
   .alpha-nav {
-    display: grid;
-    grid-template-columns: repeat(13, 1fr);
-    gap: 6px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 3px;
     margin-bottom: 1.5rem;
+    align-items: center;
   }
 
   .alpha-btn {
-    aspect-ratio: 1;
-    width: 100%;
+    width: 22px;
+    height: 22px;
     padding: 0;
-    border-radius: var(--radius-sm);
-    border: 1.5px solid #0000FF;
-    background: var(--c-surface);
-    font-size: 0.85rem;
+    border-radius: 3px;
+    border: none;
+    background: transparent;
+    font-size: 0.72rem;
     font-weight: 700;
     cursor: pointer;
     color: #0000FF;
@@ -133,11 +134,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
 
-  .alpha-btn:hover { background: #0000FF; color: #fff; }
-  .alpha-btn.active { background: #0000FF; border-color: #0000FF; color: #fff; }
-  .alpha-btn.empty { opacity: 0.2; cursor: default; pointer-events: none; border-color: var(--c-border); color: var(--c-muted); }
+  .alpha-btn:hover { background: #0000FF; color: #fff; border-radius: 3px; }
+  .alpha-btn.active { background: #0000FF; color: #fff; border-radius: 3px; }
+  .alpha-btn.empty { opacity: 0.2; cursor: default; pointer-events: none; }
 
   /* Stats bar */
   #intro {
@@ -278,7 +280,6 @@
   @media (max-width: 600px) {
     header { padding: 1.5rem 1rem 1rem; }
     .toolbar { flex-direction: column; }
-    #randomBtn { width: 100%; justify-content: center; }
   }
   footer {
     background: #0000FF;
@@ -306,13 +307,11 @@
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="text" id="searchInput" placeholder="Rechercher un terme…" autocomplete="off" />
     </div>
-    <button id="randomBtn">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
-      Mot au hasard
-    </button>
   </div>
 
   <div class="alpha-nav" id="alphNav">
+    <button id="randomBtn" class="alpha-btn" style="width:auto;padding:0 10px;border:1.5px solid #0000FF;color:#0000FF;font-size:0.72rem;font-weight:700;background:transparent;border-radius:3px;height:22px;flex-shrink:0;">Random</button>
+    <div style="width:1px;height:16px;background:var(--c-border);margin:0 4px;flex-shrink:0;"></div>
     <button class="alpha-btn" data-l="A">A</button>
     <button class="alpha-btn" data-l="B">B</button>
     <button class="alpha-btn" data-l="C">C</button>
