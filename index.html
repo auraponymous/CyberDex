@@ -385,10 +385,11 @@ async function loadData() {
 
     ALL = dataRows.map(r => ({
       terme:       r.c[0]?.v ?? '',
-      definition:  r.c[1]?.v ?? '',
-      precision:   r.c[2]?.v ?? '',
-      explication: r.c[3]?.v ?? '',
-      renvois:     r.c[4]?.v ?? '',
+      variante:    r.c[1]?.v ?? '',
+      definition:  r.c[2]?.v ?? '',
+      precision:   r.c[3]?.v ?? '',
+      explication: r.c[4]?.v ?? '',
+      renvois:     r.c[5]?.v ?? '',
     })).filter(r => r.terme);
 
     const count = ALL.length;
@@ -437,6 +438,7 @@ function showEntry(entry) {
   document.getElementById('suggestions').classList.remove('open');
 
   const terme = entry.terme || '';
+  const variante = entry.variante || '';
   const def = entry.definition || '';
   const precision = entry.precision || '';
   const explication = entry.explication || '';
@@ -448,7 +450,7 @@ function showEntry(entry) {
     <div class="entry expanded">
       <div class="entry-header">
         <div>
-          <div class="entry-term">${terme}</div>
+          <div class="entry-term">${terme}${variante ? `<span style="font-size:0.78rem;font-weight:400;color:var(--c-muted);margin-left:8px;font-style:italic;">aussi : ${variante}</span>` : ''}</div>
           <div class="entry-def-short" style="font-weight:700;color:var(--c-text)">${def}</div>
         </div>
       </div>
@@ -464,12 +466,17 @@ function showSuggestions(q) {
   const sugg = document.getElementById('suggestions');
   if (!q) { sugg.classList.remove('open'); return; }
 
-  const matches = ALL.filter(e => normalize(e.terme).includes(normalize(q))).slice(0, 8);
+  const q_norm = normalize(q);
+  const matches = ALL.filter(e =>
+    normalize(e.terme).includes(q_norm) ||
+    normalize(e.variante || '').includes(q_norm)
+  ).slice(0, 8);
   if (!matches.length) { sugg.classList.remove('open'); return; }
 
-  sugg.innerHTML = matches.map((e, i) =>
-    `<div class="suggestion-item" data-idx="${i}">${e.terme}</div>`
-  ).join('');
+  sugg.innerHTML = matches.map((e, i) => {
+    const matchesVariante = !normalize(e.terme).includes(q_norm) && normalize(e.variante || '').includes(q_norm);
+    return `<div class="suggestion-item" data-idx="${i}">${e.terme}${matchesVariante ? `<span style="color:var(--c-muted);font-size:0.78rem;margin-left:6px;font-style:italic;">${e.variante}</span>` : ''}</div>`;
+  }).join('');
   sugg._matches = matches;
   sugg.classList.add('open');
 }
