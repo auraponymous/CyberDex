@@ -502,8 +502,8 @@ function render() {
         </div>
       </div>
       <div class="entry-body">
-        ${precision ? `<div class="field-label">Précision</div><div class="field-content">${highlight(precision, q)}</div>` : ''}
-        ${explication ? `<div class="field-label">Explication</div><div class="field-content italic">${highlight(explication, q)}</div>` : ''}
+        ${precision ? `<div class="field-content">${highlight(precision, q)}</div>` : ''}
+        ${explication ? `<div class="field-content">${highlight(explication, q)}</div>` : ''}
         ${renvoisArr.length ? `<div class="field-label">Voir aussi</div><div class="tags">${tagsHtml}</div>` : ''}
       </div>
     </div>`;
