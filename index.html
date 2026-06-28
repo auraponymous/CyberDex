@@ -189,14 +189,14 @@
   .entry-variante {
     font-size: 0.78rem;
     font-weight: 400;
-    color: var(--c-muted);
+    color: #0000FF;
     font-style: italic;
     margin-top: 0.1rem;
   }
 
   .entry-def-short {
     font-size: 0.85rem;
-    color: #1a1a2e;
+    color: #0000FF;
     font-weight: 700;
     margin-top: 0.3rem;
     line-height: 1.5;
@@ -391,7 +391,7 @@ function showEntry(entry) {
       </div>
       <div class="entry-body" style="display:block">
         ${precision   ? `<div class="field-content">${precision}</div>`   : ''}
-        ${explication ? `<div class="field-content">${explication}</div>` : ''}
+        ${explication ? `<div class="field-content" style="font-style:italic">${explication}</div>` : ''}
         ${renvoisArr.length
           ? `<div class="field-label">Voir aussi</div><div class="tags">${tagsHtml}</div>`
           : ''}
