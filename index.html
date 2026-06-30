@@ -336,6 +336,7 @@ async function loadData() {
     // Index de chaque colonne par nom
     const idx = {
       terme:       firstRow.indexOf('terme'),
+      deroule:     firstRow.indexOf('deroule'),
       variante:    firstRow.indexOf('variante'),
       definition:  firstRow.indexOf('definition'),
       precision:   firstRow.indexOf('precision'),
@@ -347,6 +348,7 @@ async function loadData() {
 
     ALL = dataRows.map(r => ({
       terme:       col(r, 'terme'),
+      deroule:     col(r, 'deroule'),
       variante:    col(r, 'variante'),
       definition:  col(r, 'definition'),
       precision:   col(r, 'precision'),
@@ -356,7 +358,7 @@ async function loadData() {
 
     const count = ALL.length;
     document.getElementById('lastUpdate').textContent =
-      `${count} terme${count > 1 ? 's' : ''} amendés régulièrement`;
+      `${count} terme${count > 1 ? 's' : ''} · mis à jour automatiquement`;
   } catch(e) {
     console.error(e);
   }
@@ -368,6 +370,7 @@ function showEntry(entry) {
   document.getElementById('suggestions').classList.remove('open');
 
   const terme       = entry.terme || '';
+  const deroule     = entry.deroule || '';
   const variante    = entry.variante || '';
   const def         = entry.definition || '';
   const precision   = entry.precision || '';
@@ -384,7 +387,7 @@ function showEntry(entry) {
     <div class="entry expanded">
       <div class="entry-header">
         <div>
-          <div class="entry-term">${terme}</div>
+          <div class="entry-term">${terme}${deroule ? ` - ${deroule}` : ''}</div>
           ${variante ? `<div class="entry-variante">${variante}</div>` : ''}
           <div class="entry-def-short">${def}</div>
         </div>
@@ -416,6 +419,7 @@ function showSuggestions(q) {
   // Recherche dans terme ET variante
   const matches = ALL.filter(e =>
     normalize(e.terme).includes(q_norm) ||
+    normalize(e.deroule || '').includes(q_norm) ||
     normalize(e.variante || '').includes(q_norm)
   ).slice(0, 8);
 
