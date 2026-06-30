@@ -10,15 +10,10 @@
     --c-surface: #ffffff;
     --c-border: rgba(0,0,0,0.1);
     --c-border-hover: rgba(0,0,0,0.2);
-    --c-text: #0000FF;
     --c-muted: #6b7280;
-    --c-accent: #0000FF;
     --c-accent-light: #eff6ff;
     --c-accent-border: #bfdbfe;
     --c-tag-bg: #f1f5f9;
-    --c-tag-text: #475569;
-    --c-random-bg: #0000FF;
-    --c-random-text: #ffffff;
     --radius: 10px;
     --radius-sm: 6px;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -64,7 +59,7 @@
   .toolbar {
     display: flex;
     gap: 10px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     align-items: center;
   }
 
@@ -127,8 +122,8 @@
   .suggestion-item:hover,
   .suggestion-item.highlighted { background: var(--c-accent-light); color: #0000FF; }
 
-  /* Random button */
-  #randomBtn {
+  /* Search button */
+  #searchBtn {
     padding: 0.65rem 1.2rem;
     background: #0000FF;
     color: #fff;
@@ -141,42 +136,108 @@
     transition: opacity 0.15s;
   }
 
-  #randomBtn:hover { opacity: 0.85; }
+  #searchBtn:hover { opacity: 0.85; }
 
-  /* Intro */
-  #intro {
+  /* Alpha nav */
+  .alpha-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 3px;
+    margin-bottom: 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .alpha-btn {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border-radius: 3px;
+    border: none;
+    background: transparent;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: #0000FF;
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .alpha-btn:hover { background: #0000FF; color: #fff; border-radius: 3px; }
+  .alpha-btn.active { background: #0000FF; color: #fff; border-radius: 3px; }
+  .alpha-btn.empty { opacity: 0.2; cursor: default; pointer-events: none; }
+
+  /* Random button — full width row under letters */
+  #randomBtn {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: transparent;
+    color: #0000FF;
+    border: 1.5px solid #0000FF;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 1.5rem;
+  }
+
+  #randomBtn:hover { background: #0000FF; color: #fff; }
+
+  /* Liste des mots (vue par lettre) */
+  .word-list-item {
     background: var(--c-surface);
     border: 1.5px solid var(--c-border);
     border-radius: var(--radius);
-    padding: 1.75rem 2rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.8;
-    font-size: 0.92rem;
-    color: #1a1a2e;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
   }
 
-  #intro p { margin-bottom: 1.1rem; }
-  #intro p:last-child { margin-bottom: 0; }
+  .word-list-item:hover { border-color: var(--c-border-hover); }
+  .word-list-item.expanded { border-color: var(--c-accent-border); }
 
-  /* Entry card */
+  .word-list-term {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0000FF;
+  }
+
+  .word-list-variante {
+    font-size: 0.78rem;
+    font-style: italic;
+    color: #0000FF;
+    margin-top: 0.1rem;
+  }
+
+  .word-list-def {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #0000FF;
+    margin-top: 0.3rem;
+    line-height: 1.5;
+  }
+
+  .word-list-body {
+    display: none;
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1.5px solid var(--c-border);
+  }
+
+  .word-list-item.expanded .word-list-body { display: block; }
+
+  /* Entry card (recherche directe) */
   .entry {
     background: var(--c-surface);
     border: 1.5px solid var(--c-border);
     border-radius: var(--radius);
     padding: 1.1rem 1.25rem;
     margin-bottom: 0.75rem;
-    transition: border-color 0.15s;
-    cursor: pointer;
-  }
-
-  .entry:hover { border-color: var(--c-border-hover); }
-  .entry.expanded { border-color: var(--c-accent-border); }
-
-  .entry-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
   }
 
   .entry-term {
@@ -203,13 +264,10 @@
   }
 
   .entry-body {
-    display: none;
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1.5px solid var(--c-border);
   }
-
-  .entry.expanded .entry-body { display: block; }
 
   .field-label {
     font-size: 0.7rem;
@@ -257,8 +315,6 @@
     font-size: 0.9rem;
   }
 
-  mark { background: #fef08a; border-radius: 2px; padding: 0 1px; }
-
   footer {
     background: #0000FF;
     color: rgba(255,255,255,0.75);
@@ -269,9 +325,6 @@
 
   @media (max-width: 600px) {
     header { padding: 1.5rem 1rem 1rem; }
-    .toolbar { flex-wrap: wrap; }
-    #randomBtn { width: 100%; justify-content: center; }
-    #intro { padding: 1.25rem; }
   }
 </style>
 </head>
@@ -292,15 +345,40 @@
       <input type="text" id="searchInput" placeholder="Rechercher un terme…" autocomplete="off" />
       <div id="suggestions"></div>
     </div>
-    <button id="randomBtn">Random</button>
+    <button id="searchBtn">Recherche</button>
   </div>
 
-  <div id="intro">
-    <p>Le cyberespace occupe aujourd'hui une place centrale dans nos sociétés. Il structure les communications, les échanges économiques, les infrastructures critiques, les activités des États et une part croissante de nos interactions quotidiennes. Longtemps perçu comme un domaine réservé aux informaticiens, il est devenu un espace où se rencontrent technologies, stratégies, intérêts économiques, enjeux politiques et comportements humains.</p>
-    <p>Ce dictionnaire a pour ambition d'éclairer cet univers complexe à travers ses principaux concepts, acteurs, techniques, organisations et événements. Le lecteur y trouvera aussi bien des notions fondamentales liées au fonctionnement des réseaux et des systèmes informatiques que des termes issus de la cybersécurité, du renseignement, de la réglementation, de l'économie numérique, de l'influence informationnelle ou encore de la géopolitique.</p>
-    <p>Les entrées ont été conçues pour être accessibles aux non-spécialistes tout en conservant la rigueur nécessaire à une bonne compréhension des enjeux contemporains. Elles privilégient les usages les plus courants du vocabulaire cyber, qu'il soit technique, institutionnel ou opérationnel, et s'appuient autant que possible sur des exemples concrets.</p>
-    <p>Parce que le cyberespace ne se résume ni à la technique ni à la sécurité, ce dictionnaire explore également ses dimensions humaines, culturelles et historiques. Il invite ainsi le lecteur à découvrir non seulement les outils et les menaces qui façonnent le monde numérique, mais aussi les idées, les pratiques et les rapports de force qui l'animent.</p>
+  <div class="alpha-nav" id="alphNav">
+    <button class="alpha-btn" data-l="A">A</button>
+    <button class="alpha-btn" data-l="B">B</button>
+    <button class="alpha-btn" data-l="C">C</button>
+    <button class="alpha-btn" data-l="D">D</button>
+    <button class="alpha-btn" data-l="E">E</button>
+    <button class="alpha-btn" data-l="F">F</button>
+    <button class="alpha-btn" data-l="G">G</button>
+    <button class="alpha-btn" data-l="H">H</button>
+    <button class="alpha-btn" data-l="I">I</button>
+    <button class="alpha-btn" data-l="J">J</button>
+    <button class="alpha-btn" data-l="K">K</button>
+    <button class="alpha-btn" data-l="L">L</button>
+    <button class="alpha-btn" data-l="M">M</button>
+    <button class="alpha-btn" data-l="N">N</button>
+    <button class="alpha-btn" data-l="O">O</button>
+    <button class="alpha-btn" data-l="P">P</button>
+    <button class="alpha-btn" data-l="Q">Q</button>
+    <button class="alpha-btn" data-l="R">R</button>
+    <button class="alpha-btn" data-l="S">S</button>
+    <button class="alpha-btn" data-l="T">T</button>
+    <button class="alpha-btn" data-l="U">U</button>
+    <button class="alpha-btn" data-l="V">V</button>
+    <button class="alpha-btn" data-l="W">W</button>
+    <button class="alpha-btn" data-l="X">X</button>
+    <button class="alpha-btn" data-l="Y">Y</button>
+    <button class="alpha-btn" data-l="Z">Z</button>
   </div>
+
+  <button id="randomBtn">Un mot aléatoire</button>
+
   <div id="entries"></div>
 
 </div>
@@ -311,7 +389,7 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────
 const SHEET_ID   = '1BAsZeJRP0eYepRGD6hVNmNpXw1kcMPkbbt7s_W7nkjA';
 const SHEET_NAME = 'Dico_Cyber';
-// Colonnes : terme | variante | definition | precision | explication | renvois
+// Colonnes lues par nom : terme | deroule | variante | definition | precision | explication | renvois
 // ──────────────────────────────────────────────────────────────────────────
 
 let ALL = [];
@@ -328,12 +406,10 @@ async function loadData() {
     const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1]);
     const rows = json.table.rows;
 
-    // Lire les headers depuis la première ligne pour mapper par nom
     const firstRow = rows[0]?.c?.map(c => (c?.v || '').toLowerCase().trim()) || [];
     const hasHeader = firstRow.includes('terme');
     const dataRows  = hasHeader ? rows.slice(1) : rows;
 
-    // Index de chaque colonne par nom
     const idx = {
       terme:       firstRow.indexOf('terme'),
       deroule:     firstRow.indexOf('deroule'),
@@ -358,21 +434,23 @@ async function loadData() {
 
     const count = ALL.length;
     document.getElementById('lastUpdate').textContent =
-      `${count} terme${count > 1 ? 's' : ''} · mis à jour automatiquement`;
+      `${count} terme${count > 1 ? 's' : ''} · amendés régulièrement`;
+
+    markEmptyLetters();
   } catch(e) {
     console.error(e);
   }
 }
 
-// ── Affichage d'une fiche ─────────────────────────────────────────────────
-function showEntry(entry) {
-  document.getElementById('intro').style.display = 'none';
-  document.getElementById('suggestions').classList.remove('open');
+function markEmptyLetters() {
+  const present = new Set(ALL.map(e => normalize(e.terme || '')[0]?.toUpperCase()));
+  document.querySelectorAll('.alpha-btn').forEach(btn => {
+    btn.classList.toggle('empty', !present.has(btn.dataset.l));
+  });
+}
 
-  const terme       = entry.terme || '';
-  const deroule     = entry.deroule || '';
-  const variante    = entry.variante || '';
-  const def         = entry.definition || '';
+// ── Construction du contenu détaillé (champs communs) ───────────────────
+function buildBodyHtml(entry) {
   const precision   = entry.precision || '';
   const explication = entry.explication || '';
   const renvois     = entry.renvois || '';
@@ -383,23 +461,64 @@ function showEntry(entry) {
     .map(r => `<span class="tag" data-search="${r}">${r}</span>`)
     .join('');
 
+  return `
+    ${precision   ? `<div class="field-content">${precision}</div>`   : ''}
+    ${explication ? `<div class="field-content" style="font-style:italic">${explication}</div>` : ''}
+    ${renvoisArr.length
+      ? `<div class="field-label">Voir aussi</div><div class="tags">${tagsHtml}</div>`
+      : ''}
+  `;
+}
+
+function buildHeaderHtml(entry) {
+  const terme    = entry.terme || '';
+  const deroule  = entry.deroule || '';
+  const variante = entry.variante || '';
+  const def      = entry.definition || '';
+  return `
+    <div class="entry-term">${terme}${deroule ? ` - ${deroule}` : ''}</div>
+    ${variante ? `<div class="entry-variante">${variante}</div>` : ''}
+    <div class="entry-def-short">${def}</div>
+  `;
+}
+
+// ── Affichage d'une fiche complète (recherche directe) ──────────────────
+function showEntry(entry) {
+  document.getElementById('suggestions').classList.remove('open');
   document.getElementById('entries').innerHTML = `
-    <div class="entry expanded">
-      <div class="entry-header">
-        <div>
-          <div class="entry-term">${terme}${deroule ? ` - ${deroule}` : ''}</div>
-          ${variante ? `<div class="entry-variante">${variante}</div>` : ''}
-          <div class="entry-def-short">${def}</div>
-        </div>
-      </div>
-      <div class="entry-body" style="display:block">
-        ${precision   ? `<div class="field-content">${precision}</div>`   : ''}
-        ${explication ? `<div class="field-content" style="font-style:italic">${explication}</div>` : ''}
-        ${renvoisArr.length
-          ? `<div class="field-label">Voir aussi</div><div class="tags">${tagsHtml}</div>`
-          : ''}
-      </div>
+    <div class="entry">
+      ${buildHeaderHtml(entry)}
+      <div class="entry-body">${buildBodyHtml(entry)}</div>
     </div>`;
+}
+
+// ── Affichage de la liste des mots pour une lettre ───────────────────────
+function showLetterList(letter) {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('suggestions').classList.remove('open');
+
+  document.querySelectorAll('.alpha-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.l === letter)
+  );
+
+  const matches = ALL
+    .filter(e => normalize(e.terme || '')[0]?.toUpperCase() === letter)
+    .sort((a, b) => normalize(a.terme).localeCompare(normalize(b.terme)));
+
+  if (!matches.length) {
+    document.getElementById('entries').innerHTML = `<div class="state-msg">Aucun terme pour la lettre ${letter}.</div>`;
+    return;
+  }
+
+  const html = matches.map((e, i) => `
+    <div class="word-list-item" data-idx="${i}">
+      ${buildHeaderHtml(e).replace('entry-term', 'word-list-term').replace('entry-variante', 'word-list-variante').replace('entry-def-short', 'word-list-def')}
+      <div class="word-list-body">${buildBodyHtml(e)}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('entries').innerHTML = html;
+  document.getElementById('entries')._matches = matches;
 }
 
 // ── Retour accueil ────────────────────────────────────────────────────────
@@ -407,7 +526,7 @@ function showHome() {
   document.getElementById('searchInput').value = '';
   document.getElementById('suggestions').classList.remove('open');
   document.getElementById('entries').innerHTML = '';
-  document.getElementById('intro').style.display = 'block';
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
 }
 
 // ── Suggestions ───────────────────────────────────────────────────────────
@@ -416,7 +535,6 @@ function showSuggestions(q) {
   if (!q) { sugg.classList.remove('open'); return; }
 
   const q_norm = normalize(q);
-  // Recherche dans terme ET variante
   const matches = ALL.filter(e =>
     normalize(e.terme).includes(q_norm) ||
     normalize(e.deroule || '').includes(q_norm) ||
@@ -426,25 +544,34 @@ function showSuggestions(q) {
   if (!matches.length) { sugg.classList.remove('open'); return; }
 
   sugg.innerHTML = matches.map((e, i) => {
-    const viaVariante = !normalize(e.terme).includes(q_norm);
+    const viaAutre = !normalize(e.terme).includes(q_norm);
+    const extra = viaAutre
+      ? (normalize(e.deroule || '').includes(q_norm) ? e.deroule : e.variante)
+      : '';
     return `<div class="suggestion-item" data-idx="${i}">
-      ${e.terme}${viaVariante && e.variante
-        ? `<span style="color:var(--c-muted);font-size:0.78rem;margin-left:6px;font-style:italic;">${e.variante}</span>`
-        : ''}
+      ${e.terme}${extra ? `<span style="color:var(--c-muted);font-size:0.78rem;margin-left:6px;font-style:italic;">${extra}</span>` : ''}
     </div>`;
   }).join('');
   sugg._matches = matches;
   sugg.classList.add('open');
 }
 
+function doSearch() {
+  const sugg = document.getElementById('suggestions');
+  if (sugg._matches && sugg._matches.length) {
+    document.getElementById('searchInput').value = sugg._matches[0].terme;
+    showEntry(sugg._matches[0]);
+  }
+  sugg.classList.remove('open');
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+}
+
 // ── Événements ────────────────────────────────────────────────────────────
 
-// Frappe → suggestions
 document.getElementById('searchInput').addEventListener('input', e => {
   showSuggestions(e.target.value);
 });
 
-// Clavier dans le champ
 document.getElementById('searchInput').addEventListener('keydown', e => {
   const sugg  = document.getElementById('suggestions');
   const items = sugg.querySelectorAll('.suggestion-item');
@@ -470,18 +597,16 @@ document.getElementById('searchInput').addEventListener('keydown', e => {
       const entry = sugg._matches[Array.from(items).indexOf(highlighted)];
       document.getElementById('searchInput').value = entry.terme;
       showEntry(entry);
-    } else if (sugg._matches && sugg._matches.length) {
-      document.getElementById('searchInput').value = sugg._matches[0].terme;
-      showEntry(sugg._matches[0]);
+      sugg.classList.remove('open');
+      document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+    } else {
+      doSearch();
     }
-    sugg.classList.remove('open');
-
   } else if (e.key === 'Escape') {
     sugg.classList.remove('open');
   }
 });
 
-// Clic sur une suggestion
 document.getElementById('suggestions').addEventListener('click', e => {
   const item = e.target.closest('.suggestion-item');
   if (!item) return;
@@ -489,13 +614,22 @@ document.getElementById('suggestions').addEventListener('click', e => {
   const entry = sugg._matches[parseInt(item.dataset.idx)];
   document.getElementById('searchInput').value = entry.terme;
   showEntry(entry);
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
 });
 
-// Fermer suggestions si clic ailleurs
+document.getElementById('searchBtn').addEventListener('click', doSearch);
+
 document.addEventListener('click', e => {
   if (!e.target.closest('.search-wrap')) {
     document.getElementById('suggestions').classList.remove('open');
   }
+});
+
+// Lettres
+document.getElementById('alphNav').addEventListener('click', e => {
+  const btn = e.target.closest('.alpha-btn');
+  if (!btn || btn.classList.contains('empty')) return;
+  showLetterList(btn.dataset.l);
 });
 
 // Random
@@ -503,6 +637,7 @@ document.getElementById('randomBtn').addEventListener('click', () => {
   if (!ALL.length) return;
   const pick = ALL[Math.floor(Math.random() * ALL.length)];
   document.getElementById('searchInput').value = pick.terme;
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
   showEntry(pick);
 });
 
@@ -512,7 +647,7 @@ document.getElementById('homeLink').addEventListener('click', e => {
   showHome();
 });
 
-// Clic sur un tag → fiche directe ou suggestions
+// Clics dans la zone des entrées : déplier une fiche de la liste, ou suivre un tag
 document.getElementById('entries').addEventListener('click', e => {
   const tag = e.target.closest('.tag');
   if (tag) {
@@ -520,15 +655,20 @@ document.getElementById('entries').addEventListener('click', e => {
     const s     = tag.dataset.search;
     const match = ALL.find(en => normalize(en.terme) === normalize(s));
     document.getElementById('searchInput').value = s;
+    document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
     if (match) showEntry(match);
     else showSuggestions(s);
     return;
+  }
+
+  const item = e.target.closest('.word-list-item');
+  if (item) {
+    item.classList.toggle('expanded');
   }
 });
 
 // ── Init ──────────────────────────────────────────────────────────────────
 document.getElementById('entries').innerHTML = '';
-document.getElementById('intro').style.display = 'block';
 loadData();
 </script>
 </body>
