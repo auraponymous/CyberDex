@@ -4,7 +4,7 @@ Ce projet est mis à disposition selon les termes de la licence :
 
 **Creative Commons Attribution - Pas d’Utilisation Commerciale 4.0 International (CC BY-NC 4.0)**
 
-Vous êtes autorisé à :
+Vous êtes autorisé à : 
 
 * partager, copier et redistribuer le contenu sur tout support ou format ;
 * adapter, transformer et modifier le contenu ;
