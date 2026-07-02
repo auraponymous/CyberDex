@@ -1,4 +1,4 @@
-# LE DICO CYBER
+# Le Dico Cyber
 
 > *Un dictionnaire francophone consacré à la cybersécurité, au renseignement, à l’influence, à la géopolitique et aux technologies du cyberespace.*
 
