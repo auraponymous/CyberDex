@@ -162,14 +162,6 @@
 
   .terminal-left { flex: 1; min-width: 220px; }
 
-  .terminal-eyebrow {
-    font-size: 0.68rem;
-    color: var(--c-neon-dim);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-
   .terminal-title {
     font-size: 1.3rem;
     font-weight: 700;
@@ -201,12 +193,6 @@
     align-items: flex-end;
     gap: 0.6rem;
   }
-
-  .terminal-count {
-    font-size: 0.72rem;
-    color: var(--c-muted);
-  }
-  .terminal-count b { color: var(--c-neon); font-weight: 700; }
 
   .cta-btn {
     padding: 0.7rem 1.3rem;
@@ -251,29 +237,8 @@
     box-shadow: 0 6px 20px rgba(0,255,157,0.08);
   }
 
-  .tile-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
   .tile-icon {
     color: var(--c-neon);
-  }
-
-  .tile-count-badge {
-    font-size: 0.62rem;
-    color: var(--c-muted);
-    border: 1px solid var(--c-border);
-    border-radius: 20px;
-    padding: 2px 8px;
-    letter-spacing: 0.2px;
-  }
-
-  .tile-count-badge.is-empty {
-    color: var(--c-neon-dim);
-    border-color: #00ff9d55;
-    font-weight: 700;
   }
 
   .tile-title {
@@ -286,7 +251,7 @@
   .tile-desc {
     font-size: 0.75rem;
     line-height: 1.5;
-    color: var(--c-muted);
+    color: var(--c-text);
   }
 
   footer {
@@ -340,73 +305,49 @@
   <div class="tiles-grid" id="tilesGrid">
 
     <a class="tile" href="comprendre.html" data-sheet="comprendre">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
+      <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
       <div class="tile-title">COMPRENDRE</div>
       <div class="tile-desc">Panoramas et fondamentaux pour saisir les enjeux cyber.</div>
     </a>
 
     <a class="tile" href="dater.html" data-sheet="dater">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
+      <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
       <div class="tile-title">DATER</div>
       <div class="tile-desc">Repères chronologiques : incidents, lois, ruptures.</div>
     </a>
 
     <a class="tile" href="sengager.html" data-sheet="sengager">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M17 8.5a3 3 0 1 1 0-6M21.5 20c0-3-2-5.2-4.8-5.8"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
+      <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M17 8.5a3 3 0 1 1 0-6M21.5 20c0-3-2-5.2-4.8-5.8"/></svg></span>
       <div class="tile-title">S'ENGAGER</div>
       <div class="tile-desc">Carrières, formations, communautés cyber.</div>
     </a>
 
     <a class="tile" href="reguler.html" data-sheet="reguler">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM19 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM5 7h14M9 21h6"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
+      <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM19 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM5 7h14M9 21h6"/></svg></span>
       <div class="tile-title">RÉGULER</div>
       <div class="tile-desc">Cadres juridiques, normes, conformité.</div>
     </a>
 
     <a class="tile" href="redteam.html" data-sheet="redteam">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 3.8 8.5 9 10 5.2-1.5 9-5 9-10V6l-9-4z"/><path d="m9.5 12 2 2 4-4"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
+      <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 3.8 8.5 9 10 5.2-1.5 9-5 9-10V6l-9-4z"/><path d="m9.5 12 2 2 4-4"/></svg></span>
       <div class="tile-title">RED TEAM</div>
-      <div class="tile-desc">Techniques offensives, intrusion, exploitation.</div>
+      <div class="tile-desc">Profils et carrières des grands noms des hackeurs de l'ombre.</div>
     </a>
 
     <a class="tile" href="menacer.html" data-sheet="menacer">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M10.3 3.9 2.5 17a1.5 1.5 0 0 0 1.3 2.2h16.4a1.5 1.5 0 0 0 1.3-2.2L13.7 3.9a1.6 1.6 0 0 0-2.8 0z"/><path d="M12 9v4M12 16.5h.01"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
+      <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M10.3 3.9 2.5 17a1.5 1.5 0 0 0 1.3 2.2h16.4a1.5 1.5 0 0 0 1.3-2.2L13.7 3.9a1.6 1.6 0 0 0-2.8 0z"/><path d="M12 9v4M12 16.5h.01"/></svg></span>
       <div class="tile-title">MENACER</div>
-      <div class="tile-desc">Panorama des menaces, acteurs, modes opératoires.</div>
+      <div class="tile-desc">Panorama des menaces, modes opératoires.</div>
     </a>
 
     <a class="tile" href="bleuteam.html" data-sheet="bleuteam">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 3.8 8.5 9 10 5.2-1.5 9-5 9-10V6l-9-4z"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
+      <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 3.8 8.5 9 10 5.2-1.5 9-5 9-10V6l-9-4z"/></svg></span>
       <div class="tile-title">BLEU TEAM</div>
-      <div class="tile-desc">Défense, détection, réponse à incident.</div>
+      <div class="tile-desc">Profils et carrières des anges gardiens du cyberespace.</div>
     </a>
 
     <a class="tile" href="proteger.html" data-sheet="proteger">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
+      <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
       <div class="tile-title">PROTÉGER</div>
       <div class="tile-desc">Bonnes pratiques, hygiène numérique, durcissement.</div>
     </a>
@@ -422,11 +363,9 @@
     </div>
     <div class="terminal-body">
       <div class="terminal-left">
-        <div class="terminal-eyebrow">Le lexique de référence</div>
         <div class="terminal-title">LE DICO CYBER</div>
       </div>
       <div class="terminal-right">
-        <div class="terminal-count" id="dicoCount">chargement…</div>
         <span class="cta-btn">[ OUVRIR_LE_DICO ]</span>
       </div>
     </div>
@@ -439,63 +378,9 @@
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────
 // Base de données : BDD_CyberDex (Google Sheet)
-const SHEET_ID = '1BAsZeJRP0eYepRGD6hVNmNpXw1kcMPkbbt7s_W7nkjA';
 // Colonnes des onglets rubriques : titre | accroche | contenu | image
 // Onglet du dico : Dico_Cyber (colonne pivot : terme)
 // ──────────────────────────────────────────────────────────────────────────
-
-function normalizeHeader(str) {
-  return (str || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-}
-
-async function fetchTabRowCount(sheetName, titleKeys) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
-  const res  = await fetch(url);
-  const text = await res.text();
-  const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1]);
-  const rows = json.table.rows || [];
-
-  const firstRow = rows[0]?.c?.map(c => normalizeHeader(c?.v)) || [];
-  let titleIdx = -1;
-  for (const key of titleKeys) {
-    const i = firstRow.indexOf(key);
-    if (i >= 0) { titleIdx = i; break; }
-  }
-  const hasHeader = titleIdx >= 0;
-
-  // Pas d'en-tête détecté : on suppose que la 1ère colonne porte le titre,
-  // et on ne compte que les lignes réellement renseignées (jamais tout le tableau brut).
-  const col   = hasHeader ? titleIdx : 0;
-  const rowsToCheck = hasHeader ? rows.slice(1) : rows;
-
-  return rowsToCheck.filter(r => (r.c?.[col]?.v ?? '').toString().trim()).length;
-}
-
-// Compteur de la carte Dico Cyber (colonne "terme")
-fetchTabRowCount('Dico_Cyber', ['terme']).then(count => {
-  document.getElementById('dicoCount').innerHTML = `<b>${count}</b> termes référencés`;
-}).catch(() => {
-  document.getElementById('dicoCount').textContent = '';
-});
-
-// Compteurs des rubriques (colonne "titre")
-document.querySelectorAll('.tile[data-sheet]').forEach(tile => {
-  const sheet = tile.dataset.sheet;
-  fetchTabRowCount(sheet, ['titre']).then(count => {
-    const badge = tile.querySelector('[data-count]');
-    if (count > 0) {
-      badge.textContent = `${count} fiche${count > 1 ? 's' : ''}`;
-      badge.classList.remove('is-empty');
-    } else {
-      badge.textContent = 'à venir';
-      badge.classList.add('is-empty');
-    }
-  }).catch(() => {
-    const badge = tile.querySelector('[data-count]');
-    badge.textContent = 'à venir';
-    badge.classList.add('is-empty');
-  });
-});
 
 // Effet de frappe sur la baseline du header, en boucle :
 // écrit lentement -> reste affichée 5s -> s'efface -> se réaffiche -> etc.
