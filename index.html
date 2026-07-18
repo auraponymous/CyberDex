@@ -74,7 +74,7 @@
 
   header p {
     font-size: 0.8rem;
-    color: var(--c-muted);
+    color: var(--c-text);
     margin-top: 6px;
     letter-spacing: 0.2px;
     min-height: 1.2em;
@@ -83,7 +83,7 @@
   .tagline-cursor {
     display: inline-block;
     width: 6px; height: 0.95em;
-    background: var(--c-muted);
+    background: var(--c-text);
     margin-left: 2px;
     vertical-align: text-bottom;
     animation: blink 0.9s steps(1) infinite;
@@ -227,7 +227,7 @@
   /* ─── Grille des rubriques ─── */
   .tiles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 0.85rem;
     margin-bottom: 1.5rem;
   }
@@ -258,10 +258,8 @@
   }
 
   .tile-icon {
-    color: var(--c-neon-dim);
-    transition: color 0.15s;
+    color: var(--c-neon);
   }
-  .tile:hover .tile-icon { color: var(--c-neon); }
 
   .tile-count-badge {
     font-size: 0.62rem;
@@ -270,6 +268,12 @@
     border-radius: 20px;
     padding: 2px 8px;
     letter-spacing: 0.2px;
+  }
+
+  .tile-count-badge.is-empty {
+    color: var(--c-neon-dim);
+    border-color: #00ff9d55;
+    font-weight: 700;
   }
 
   .tile-title {
@@ -294,6 +298,10 @@
     font-size: 0.72rem;
     position: relative;
     z-index: 1;
+  }
+
+  @media (max-width: 760px) {
+    .tiles-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 600px) {
@@ -349,6 +357,24 @@
       <div class="tile-desc">Repères chronologiques : incidents, lois, ruptures.</div>
     </a>
 
+    <a class="tile" href="sengager.html" data-sheet="sengager">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M17 8.5a3 3 0 1 1 0-6M21.5 20c0-3-2-5.2-4.8-5.8"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">S'ENGAGER</div>
+      <div class="tile-desc">Carrières, formations, communautés cyber.</div>
+    </a>
+
+    <a class="tile" href="reguler.html" data-sheet="reguler">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM19 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM5 7h14M9 21h6"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">RÉGULER</div>
+      <div class="tile-desc">Cadres juridiques, normes, conformité.</div>
+    </a>
+
     <a class="tile" href="redteam.html" data-sheet="redteam">
       <div class="tile-top">
         <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 3.8 8.5 9 10 5.2-1.5 9-5 9-10V6l-9-4z"/><path d="m9.5 12 2 2 4-4"/></svg></span>
@@ -385,24 +411,6 @@
       <div class="tile-desc">Bonnes pratiques, hygiène numérique, durcissement.</div>
     </a>
 
-    <a class="tile" href="sengager.html" data-sheet="sengager">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M17 8.5a3 3 0 1 1 0-6M21.5 20c0-3-2-5.2-4.8-5.8"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
-      <div class="tile-title">S'ENGAGER</div>
-      <div class="tile-desc">Carrières, formations, communautés cyber.</div>
-    </a>
-
-    <a class="tile" href="reguler.html" data-sheet="reguler">
-      <div class="tile-top">
-        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM19 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM5 7h14M9 21h6"/></svg></span>
-        <span class="tile-count-badge" data-count>—</span>
-      </div>
-      <div class="tile-title">RÉGULER</div>
-      <div class="tile-desc">Cadres juridiques, normes, conformité.</div>
-    </a>
-
   </div>
 
   <a class="terminal-card" href="dicocyber.html" id="dicoCard">
@@ -436,6 +444,10 @@ const SHEET_ID = '1BAsZeJRP0eYepRGD6hVNmNpXw1kcMPkbbt7s_W7nkjA';
 // Onglet du dico : Dico_Cyber (colonne pivot : terme)
 // ──────────────────────────────────────────────────────────────────────────
 
+function normalizeHeader(str) {
+  return (str || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
 async function fetchTabRowCount(sheetName, titleKeys) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
   const res  = await fetch(url);
@@ -443,17 +455,20 @@ async function fetchTabRowCount(sheetName, titleKeys) {
   const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1]);
   const rows = json.table.rows || [];
 
-  const firstRow = rows[0]?.c?.map(c => (c?.v || '').toLowerCase().trim()) || [];
+  const firstRow = rows[0]?.c?.map(c => normalizeHeader(c?.v)) || [];
   let titleIdx = -1;
   for (const key of titleKeys) {
     const i = firstRow.indexOf(key);
     if (i >= 0) { titleIdx = i; break; }
   }
   const hasHeader = titleIdx >= 0;
-  const dataRows  = hasHeader ? rows.slice(1) : rows;
-  if (!hasHeader) return dataRows.length; // pas d'en-tête détecté, on compte les lignes non vides
 
-  return dataRows.filter(r => (r.c?.[titleIdx]?.v || '').toString().trim()).length;
+  // Pas d'en-tête détecté : on suppose que la 1ère colonne porte le titre,
+  // et on ne compte que les lignes réellement renseignées (jamais tout le tableau brut).
+  const col   = hasHeader ? titleIdx : 0;
+  const rowsToCheck = hasHeader ? rows.slice(1) : rows;
+
+  return rowsToCheck.filter(r => (r.c?.[col]?.v ?? '').toString().trim()).length;
 }
 
 // Compteur de la carte Dico Cyber (colonne "terme")
@@ -468,14 +483,22 @@ document.querySelectorAll('.tile[data-sheet]').forEach(tile => {
   const sheet = tile.dataset.sheet;
   fetchTabRowCount(sheet, ['titre']).then(count => {
     const badge = tile.querySelector('[data-count]');
-    badge.textContent = count > 0 ? `${count} fiche${count > 1 ? 's' : ''}` : 'à venir';
+    if (count > 0) {
+      badge.textContent = `${count} fiche${count > 1 ? 's' : ''}`;
+      badge.classList.remove('is-empty');
+    } else {
+      badge.textContent = 'à venir';
+      badge.classList.add('is-empty');
+    }
   }).catch(() => {
     const badge = tile.querySelector('[data-count]');
-    badge.textContent = '';
+    badge.textContent = 'à venir';
+    badge.classList.add('is-empty');
   });
 });
 
-// Effet de frappe sur la baseline du header (une seule fois, curseur clignotant ensuite)
+// Effet de frappe sur la baseline du header, en boucle :
+// écrit lentement -> reste affichée 5s -> s'efface -> se réaffiche -> etc.
 const tagline = 'Base de connaissance cyber — dictionnaire, repères, menaces & bonnes pratiques';
 const taglineEl = document.getElementById('typedTagline');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -483,12 +506,32 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 if (reduceMotion) {
   taglineEl.textContent = tagline;
 } else {
-  let i = 0;
-  const typeInt = setInterval(() => {
-    i++;
-    taglineEl.textContent = tagline.slice(0, i);
-    if (i >= tagline.length) clearInterval(typeInt);
-  }, 22);
+  const TYPE_SPEED  = 45;   // ms par caractère (frappe)
+  const ERASE_SPEED = 25;   // ms par caractère (effacement)
+  const HOLD_TIME   = 5000; // ms d'affichage complet
+  const PAUSE_TIME  = 600;  // ms de pause écran vide
+
+  function taglineLoop() {
+    let i = 0;
+    const typeInt = setInterval(() => {
+      i++;
+      taglineEl.textContent = tagline.slice(0, i);
+      if (i >= tagline.length) {
+        clearInterval(typeInt);
+        setTimeout(() => {
+          const eraseInt = setInterval(() => {
+            i--;
+            taglineEl.textContent = tagline.slice(0, i);
+            if (i <= 0) {
+              clearInterval(eraseInt);
+              setTimeout(taglineLoop, PAUSE_TIME);
+            }
+          }, ERASE_SPEED);
+        }, HOLD_TIME);
+      }
+    }, TYPE_SPEED);
+  }
+  taglineLoop();
 }
 </script>
 </body>
