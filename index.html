@@ -77,6 +77,16 @@
     color: var(--c-muted);
     margin-top: 6px;
     letter-spacing: 0.2px;
+    min-height: 1.2em;
+  }
+
+  .tagline-cursor {
+    display: inline-block;
+    width: 6px; height: 0.95em;
+    background: var(--c-muted);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.9s steps(1) infinite;
   }
 
   .container {
@@ -313,35 +323,11 @@
 <header>
   <div class="container">
     <h1>LE_CYBERDEX</h1>
-    <p>Base de connaissance cyber — dictionnaire, repères, menaces &amp; bonnes pratiques</p>
+    <p><span id="typedTagline"></span><span class="tagline-cursor"></span></p>
   </div>
 </header>
 
 <div class="container">
-
-  <div class="section-label">accès rapide</div>
-
-  <a class="terminal-card" href="dicocyber.html" id="dicoCard">
-    <div class="terminal-bar">
-      <span class="terminal-dot"></span>
-      <span class="terminal-dot"></span>
-      <span class="terminal-dot"></span>
-      <span class="path">~/cyberdex/dico_cyber</span>
-    </div>
-    <div class="terminal-body">
-      <div class="terminal-left">
-        <div class="terminal-eyebrow">Le lexique de référence</div>
-        <div class="terminal-title">LE DICO CYBER</div>
-        <div class="terminal-line"><span class="prompt">&gt;</span> <span id="typedQuery"></span><span class="cursor"></span></div>
-      </div>
-      <div class="terminal-right">
-        <div class="terminal-count" id="dicoCount">chargement…</div>
-        <span class="cta-btn">[ OUVRIR_LE_DICO ]</span>
-      </div>
-    </div>
-  </a>
-
-  <div class="section-label">rubriques</div>
 
   <div class="tiles-grid" id="tilesGrid">
 
@@ -419,6 +405,25 @@
 
   </div>
 
+  <a class="terminal-card" href="dicocyber.html" id="dicoCard">
+    <div class="terminal-bar">
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="path">~/cyberdex/dico_cyber</span>
+    </div>
+    <div class="terminal-body">
+      <div class="terminal-left">
+        <div class="terminal-eyebrow">Le lexique de référence</div>
+        <div class="terminal-title">LE DICO CYBER</div>
+      </div>
+      <div class="terminal-right">
+        <div class="terminal-count" id="dicoCount">chargement…</div>
+        <span class="cta-btn">[ OUVRIR_LE_DICO ]</span>
+      </div>
+    </div>
+  </a>
+
 </div>
 
 <footer>© Auraponymous — 2026</footer>
@@ -470,37 +475,21 @@ document.querySelectorAll('.tile[data-sheet]').forEach(tile => {
   });
 });
 
-// Effet "terminal vivant" sur la carte Dico Cyber : recherches simulées
-const sampleQueries = ['grep -i ransomware', 'lookup phishing', 'find zero-day', 'grep -i rgpd'];
-let qIdx = 0;
-const typedEl = document.getElementById('typedQuery');
+// Effet de frappe sur la baseline du header (une seule fois, curseur clignotant ensuite)
+const tagline = 'Base de connaissance cyber — dictionnaire, repères, menaces & bonnes pratiques';
+const taglineEl = document.getElementById('typedTagline');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function typeLoop() {
-  if (reduceMotion) { typedEl.textContent = sampleQueries[0]; return; }
-  const full = sampleQueries[qIdx % sampleQueries.length];
+if (reduceMotion) {
+  taglineEl.textContent = tagline;
+} else {
   let i = 0;
-  typedEl.textContent = '';
   const typeInt = setInterval(() => {
     i++;
-    typedEl.textContent = full.slice(0, i);
-    if (i >= full.length) {
-      clearInterval(typeInt);
-      setTimeout(() => {
-        const eraseInt = setInterval(() => {
-          i--;
-          typedEl.textContent = full.slice(0, i);
-          if (i <= 0) {
-            clearInterval(eraseInt);
-            qIdx++;
-            setTimeout(typeLoop, 300);
-          }
-        }, 35);
-      }, 1400);
-    }
-  }, 55);
+    taglineEl.textContent = tagline.slice(0, i);
+    if (i >= tagline.length) clearInterval(typeInt);
+  }, 22);
 }
-typeLoop();
 </script>
 </body>
 </html>

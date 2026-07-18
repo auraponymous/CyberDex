@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RÉGULER — Le CyberDex</title>
+<style>
+  :root {
+    --c-bg: #0a0e14;
+    --c-surface: #11161f;
+    --c-border: #1e2a38;
+    --c-border-hover: #2a3a4d;
+    --c-neon: #00ff9d;
+    --c-neon-dim: #3d8b6f;
+    --c-muted: #5a6a7a;
+    --c-text: #c8d6e5;
+    font-family: 'Courier New', 'Consolas', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; overflow-x: hidden; }
+
+  body {
+    background: var(--c-bg);
+    color: var(--c-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  header {
+    background: var(--c-bg);
+    color: var(--c-neon);
+    padding: 2rem 1.5rem 1.25rem;
+    border-bottom: 1px solid #00ff9d33;
+  }
+
+  .breadcrumb {
+    font-size: 0.72rem;
+    color: var(--c-muted);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    transition: color 0.15s;
+  }
+  .breadcrumb:hover { color: var(--c-neon); }
+
+  header h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  header h1::before { content: "> "; opacity: 0.7; }
+  header h1::after {
+    content: "_";
+    opacity: 0.6;
+    animation: blink 1s steps(1) infinite;
+  }
+
+  header p {
+    font-size: 0.78rem;
+    color: var(--c-muted);
+    margin-top: 4px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    flex: 1;
+    box-sizing: border-box;
+  }
+
+  #countLine {
+    font-size: 0.75rem;
+    color: var(--c-muted);
+    margin-bottom: 1.1rem;
+  }
+  #countLine b { color: var(--c-neon); font-weight: 700; }
+
+  /* Carte article */
+  .article {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-left: 2px solid var(--c-neon-dim);
+    border-radius: 4px;
+    padding: 1rem 1.15rem;
+    margin-bottom: 0.7rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .article:hover { border-left-color: var(--c-neon); }
+  .article.expanded { border-left-color: var(--c-neon); }
+
+  .article-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-neon);
+    letter-spacing: 0.3px;
+  }
+
+  .article-accroche {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--c-text);
+    margin-top: 0.4rem;
+    line-height: 1.55;
+  }
+
+  .article-body {
+    display: none;
+    margin-top: 0.95rem;
+    padding-top: 0.95rem;
+    border-top: 1px solid var(--c-border);
+  }
+
+  .article.expanded .article-body { display: block; }
+
+  .article-image {
+    width: 100%;
+    max-height: 320px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--c-border);
+    margin-bottom: 0.85rem;
+    display: block;
+  }
+
+  .article-content {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--c-text);
+  }
+
+  .article-content p { margin-bottom: 0.8rem; }
+  .article-content p:last-child { margin-bottom: 0; }
+
+  .toggle-hint {
+    font-size: 0.68rem;
+    color: var(--c-muted);
+    margin-top: 0.5rem;
+    letter-spacing: 0.2px;
+  }
+
+  .state-msg {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--c-muted);
+    font-size: 0.82rem;
+  }
+
+  footer {
+    background: var(--c-bg);
+    border-top: 1px solid #00ff9d33;
+    color: var(--c-muted);
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.72rem;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 1.25rem 1rem 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .container { padding: 1rem 0.75rem; }
+    .article { padding: 0.85rem 1rem; }
+    .article-title { font-size: 0.88rem; }
+    .article-accroche { font-size: 0.78rem; }
+    .article-content { font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container" style="padding-top:0;padding-bottom:0;">
+    <a class="breadcrumb" href="index.html">‹ LE_CYBERDEX</a>
+    <h1>RÉGULER</h1>
+    <p>Cadres juridiques, normes, conformité.</p>
+  </div>
+</header>
+
+<div class="container">
+  <div id="countLine">chargement…</div>
+  <div id="articles"></div>
+</div>
+
+<footer>© Auraponymous — 2026</footer>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────
+// Base de données : BDD_CyberDex (Google Sheet)
+const SHEET_ID   = '1BAsZeJRP0eYepRGD6hVNmNpXw1kcMPkbbt7s_W7nkjA';
+const SHEET_NAME = 'reguler';
+// Colonnes lues par nom : titre | accroche | contenu | image
+// Une colonne vide est simplement ignorée à l'affichage, sans bloquer le reste.
+// ──────────────────────────────────────────────────────────────────────────
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+function paragraphs(text) {
+  return String(text || '')
+    .split(/\n+/)
+    .map(p => p.trim())
+    .filter(Boolean)
+    .map(p => `<p>${escapeHtml(p)}</p>`)
+    .join('');
+}
+
+async function loadData() {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  try {
+    const res  = await fetch(url);
+    const text = await res.text();
+    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1]);
+    const rows = json.table.rows || [];
+
+    const firstRow = rows[0]?.c?.map(c => (c?.v || '').toLowerCase().trim()) || [];
+    const hasHeader = firstRow.includes('titre');
+    const dataRows  = hasHeader ? rows.slice(1) : rows;
+
+    const idx = {
+      titre:    firstRow.indexOf('titre'),
+      accroche: firstRow.indexOf('accroche'),
+      contenu:  firstRow.indexOf('contenu'),
+      image:    firstRow.indexOf('image'),
+    };
+
+    const col = (r, key) => (idx[key] >= 0 ? r.c[idx[key]]?.v : null) ?? '';
+
+    const articles = dataRows.map(r => ({
+      titre:    col(r, 'titre'),
+      accroche: col(r, 'accroche'),
+      contenu:  col(r, 'contenu'),
+      image:    col(r, 'image'),
+    })).filter(a => a.titre);
+
+    const countEl = document.getElementById('countLine');
+    countEl.innerHTML = articles.length
+      ? `<b>${articles.length}</b> fiche${articles.length > 1 ? 's' : ''} dans cette rubrique`
+      : '';
+
+    const container = document.getElementById('articles');
+
+    if (!articles.length) {
+      container.innerHTML = `<div class="state-msg">Aucune fiche n'est encore publiée dans cette rubrique.</div>`;
+      return;
+    }
+
+    container.innerHTML = articles.map((a, i) => `
+      <div class="article" data-idx="${i}">
+        <div class="article-title">${escapeHtml(a.titre)}</div>
+        ${a.accroche ? `<div class="article-accroche">${escapeHtml(a.accroche)}</div>` : ''}
+        <div class="article-body">
+          ${a.image ? `<img class="article-image" src="${escapeHtml(a.image)}" alt="${escapeHtml(a.titre)}" onerror="this.remove()">` : ''}
+          ${a.contenu ? `<div class="article-content">${paragraphs(a.contenu)}</div>` : ''}
+        </div>
+        <div class="toggle-hint">[ cliquer pour ${a.contenu || a.image ? 'déplier / replier' : 'plus de détails'} ]</div>
+      </div>
+    `).join('');
+
+  } catch (e) {
+    console.error(e);
+    document.getElementById('countLine').textContent = '';
+    document.getElementById('articles').innerHTML =
+      `<div class="state-msg">Impossible de charger les données pour le moment.</div>`;
+  }
+}
+
+document.getElementById('articles').innerHTML = `<div class="state-msg">Chargement…</div>`;
+loadData();
+
+document.getElementById('articles').addEventListener('click', e => {
+  const item = e.target.closest('.article');
+  if (item) item.classList.toggle('expanded');
+});
+</script>
+</body>
+</html>
