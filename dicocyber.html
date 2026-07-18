@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Dico Cyber</title>
+<style>
+  :root {
+    --c-bg: #0a0e14;
+    --c-surface: #11161f;
+    --c-border: #1e2a38;
+    --c-border-hover: #2a3a4d;
+    --c-neon: #00ff9d;
+    --c-neon-dim: #3d8b6f;
+    --c-muted: #5a6a7a;
+    --c-text: #c8d6e5;
+    font-family: 'Courier New', 'Consolas', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--c-bg);
+    color: var(--c-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  header {
+    background: var(--c-bg);
+    color: var(--c-neon);
+    padding: 2rem 1.5rem 1.25rem;
+    border-bottom: 1px solid #00ff9d33;
+  }
+
+  header h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  header h1::before { content: "> "; opacity: 0.7; }
+  header h1::after {
+    content: "_";
+    opacity: 0.6;
+    animation: blink 1s steps(1) infinite;
+  }
+
+  header p {
+    font-size: 0.78rem;
+    color: var(--c-muted);
+    margin-top: 4px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    flex: 1;
+    box-sizing: border-box;
+  }
+
+  html, body { width: 100%; overflow-x: hidden; }
+
+  /* Toolbar */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+
+  .search-wrap {
+    flex: 1;
+    position: relative;
+  }
+
+  .search-wrap svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--c-muted);
+    pointer-events: none;
+  }
+
+  #searchInput {
+    width: 100%;
+    padding: 0.65rem 1rem 0.65rem 2.5rem;
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    background: var(--c-surface);
+    color: var(--c-neon);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+
+  #searchInput::placeholder { color: var(--c-muted); }
+  #searchInput:focus { border-color: var(--c-neon); }
+
+  /* Dropdown suggestions */
+  #suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--c-surface);
+    border: 1px solid var(--c-neon);
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    z-index: 100;
+    max-height: 280px;
+    overflow-y: auto;
+    display: none;
+  }
+
+  #suggestions.open { display: block; }
+
+  .suggestion-item {
+    padding: 0.6rem 1rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+    color: var(--c-text);
+    border-bottom: 1px solid var(--c-border);
+    transition: background 0.1s;
+  }
+
+  .suggestion-item:last-child { border-bottom: none; }
+  .suggestion-item:hover,
+  .suggestion-item.highlighted { background: #00ff9d18; color: var(--c-neon); }
+
+  /* Search button */
+  #searchBtn {
+    padding: 0.65rem 1.2rem;
+    background: transparent;
+    color: var(--c-neon);
+    border: 1px solid var(--c-neon);
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-family: inherit;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  #searchBtn:hover { background: #00ff9d18; }
+
+  /* Alpha nav */
+  .alpha-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2px;
+    margin-bottom: 0.85rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .alpha-btn {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border-radius: 2px;
+    border: none;
+    background: var(--c-surface);
+    font-size: 0.68rem;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--c-neon-dim);
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .alpha-btn:hover { background: var(--c-neon); color: var(--c-bg); }
+  .alpha-btn.active { background: var(--c-neon); color: var(--c-bg); }
+  .alpha-btn.empty { opacity: 0.25; cursor: default; pointer-events: none; color: var(--c-border); }
+
+  /* Random button */
+  #randomBtn {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: transparent;
+    color: var(--c-neon);
+    border: 1px solid var(--c-neon);
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-family: inherit;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 1.5rem;
+  }
+
+  #randomBtn:hover { background: #00ff9d18; }
+
+  /* Liste des mots (vue par lettre) */
+  .word-list-item {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-left: 2px solid var(--c-neon-dim);
+    border-radius: 4px;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .word-list-item:hover { border-left-color: var(--c-neon); }
+  .word-list-item.expanded { border-left-color: var(--c-neon); }
+
+  .word-list-term {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--c-neon);
+    letter-spacing: 0.3px;
+  }
+
+  .word-list-variante {
+    font-size: 0.74rem;
+    font-style: italic;
+    color: #7fffd4;
+    margin-top: 0.15rem;
+  }
+
+  .word-list-def {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--c-text);
+    margin-top: 0.4rem;
+    line-height: 1.55;
+  }
+
+  .word-list-body {
+    display: none;
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--c-border);
+  }
+
+  .word-list-item.expanded .word-list-body { display: block; }
+
+  /* Entry card (recherche directe) */
+  .entry {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-left: 2px solid var(--c-neon);
+    border-radius: 4px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .entry-term {
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: var(--c-neon);
+  }
+
+  .entry-variante {
+    font-size: 0.74rem;
+    font-weight: 400;
+    color: #7fffd4;
+    font-style: italic;
+    margin-top: 0.15rem;
+  }
+
+  .entry-def-short {
+    font-size: 0.8rem;
+    color: var(--c-text);
+    font-weight: 700;
+    margin-top: 0.4rem;
+    line-height: 1.55;
+  }
+
+  .entry-body {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--c-border);
+  }
+
+  .field-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    margin-bottom: 0.3rem;
+    margin-top: 0.9rem;
+  }
+
+  .field-label:first-child { margin-top: 0; }
+
+  .field-content {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--c-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 0.3rem;
+  }
+
+  .tag {
+    background: var(--c-bg);
+    color: var(--c-neon);
+    border: 1px solid #00ff9d55;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-family: inherit;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+
+  .tag:hover { background: #00ff9d18; }
+
+  .state-msg {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--c-muted);
+    font-size: 0.82rem;
+  }
+
+  footer {
+    background: var(--c-bg);
+    border-top: 1px solid #00ff9d33;
+    color: var(--c-muted);
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.72rem;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 1.25rem 1rem 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .container { padding: 1rem 0.75rem; }
+
+    .toolbar { gap: 8px; }
+    #searchInput { font-size: 16px; padding: 0.6rem 0.9rem 0.6rem 2.3rem; }
+    #searchBtn { padding: 0.6rem 0.9rem; font-size: 0.72rem; }
+
+    .alpha-nav { gap: 1px; }
+    .alpha-btn { width: 16px; height: 20px; font-size: 0.58rem; }
+
+    #randomBtn { font-size: 0.72rem; padding: 0.55rem 1rem; }
+
+    .entry, .word-list-item { padding: 0.85rem 1rem; }
+    .entry-term, .word-list-term { font-size: 0.88rem; }
+    .entry-def-short, .word-list-def { font-size: 0.78rem; }
+    .field-content { font-size: 0.8rem; }
+
+    #suggestions { max-height: 220px; }
+  }
+
+  @media (max-width: 380px) {
+    .alpha-nav { gap: 0; }
+    .alpha-btn { width: 13px; font-size: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container" style="padding-top:0;padding-bottom:0;">
+    <h1><a href="#" id="homeLink" style="color:inherit;text-decoration:none;cursor:pointer;">LE_DICO_CYBER</a></h1>
+    <p id="lastUpdate">Chargement…</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="rechercher_un_terme..." autocomplete="off" />
+      <div id="suggestions"></div>
+    </div>
+    <button id="searchBtn">[ RECHERCHE ]</button>
+  </div>
+
+  <div class="alpha-nav" id="alphNav">
+    <button class="alpha-btn" data-l="A">A</button>
+    <button class="alpha-btn" data-l="B">B</button>
+    <button class="alpha-btn" data-l="C">C</button>
+    <button class="alpha-btn" data-l="D">D</button>
+    <button class="alpha-btn" data-l="E">E</button>
+    <button class="alpha-btn" data-l="F">F</button>
+    <button class="alpha-btn" data-l="G">G</button>
+    <button class="alpha-btn" data-l="H">H</button>
+    <button class="alpha-btn" data-l="I">I</button>
+    <button class="alpha-btn" data-l="J">J</button>
+    <button class="alpha-btn" data-l="K">K</button>
+    <button class="alpha-btn" data-l="L">L</button>
+    <button class="alpha-btn" data-l="M">M</button>
+    <button class="alpha-btn" data-l="N">N</button>
+    <button class="alpha-btn" data-l="O">O</button>
+    <button class="alpha-btn" data-l="P">P</button>
+    <button class="alpha-btn" data-l="Q">Q</button>
+    <button class="alpha-btn" data-l="R">R</button>
+    <button class="alpha-btn" data-l="S">S</button>
+    <button class="alpha-btn" data-l="T">T</button>
+    <button class="alpha-btn" data-l="U">U</button>
+    <button class="alpha-btn" data-l="V">V</button>
+    <button class="alpha-btn" data-l="W">W</button>
+    <button class="alpha-btn" data-l="X">X</button>
+    <button class="alpha-btn" data-l="Y">Y</button>
+    <button class="alpha-btn" data-l="Z">Z</button>
+  </div>
+
+  <button id="randomBtn">[ UN_MOT_ALÉATOIRE ]</button>
+
+  <div id="entries"></div>
+
+</div>
+
+<footer>© Auraponymous — 2026</footer>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────
+// Base de données : BDD_CyberDex (Google Sheet)
+const SHEET_ID   = '1BAsZeJRP0eYepRGD6hVNmNpXw1kcMPkbbt7s_W7nkjA';
+const SHEET_NAME = 'Dico_Cyber';
+// Colonnes lues par nom : terme | deroule | variante | definition | precision | explication | renvois
+// ──────────────────────────────────────────────────────────────────────────
+
+let ALL = [];
+
+function normalize(str) {
+  return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+async function loadData() {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  try {
+    const res  = await fetch(url);
+    const text = await res.text();
+    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1]);
+    const rows = json.table.rows;
+
+    const firstRow = rows[0]?.c?.map(c => (c?.v || '').toLowerCase().trim()) || [];
+    const hasHeader = firstRow.includes('terme');
+    const dataRows  = hasHeader ? rows.slice(1) : rows;
+
+    const idx = {
+      terme:       firstRow.indexOf('terme'),
+      deroule:     firstRow.indexOf('deroule'),
+      variante:    firstRow.indexOf('variante'),
+      definition:  firstRow.indexOf('definition'),
+      precision:   firstRow.indexOf('precision'),
+      explication: firstRow.indexOf('explication'),
+      renvois:     firstRow.indexOf('renvois'),
+    };
+
+    const col = (r, key) => (idx[key] >= 0 ? r.c[idx[key]]?.v : null) ?? '';
+
+    ALL = dataRows.map(r => ({
+      terme:       col(r, 'terme'),
+      deroule:     col(r, 'deroule'),
+      variante:    col(r, 'variante'),
+      definition:  col(r, 'definition'),
+      precision:   col(r, 'precision'),
+      explication: col(r, 'explication'),
+      renvois:     col(r, 'renvois'),
+    })).filter(r => r.terme);
+
+    const count = ALL.length;
+    document.getElementById('lastUpdate').textContent =
+      `${count} termes · amendés régulièrement`;
+
+    markEmptyLetters();
+
+    if (ALL.length) {
+      const pick = ALL[Math.floor(Math.random() * ALL.length)];
+      showEntry(pick);
+    }
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function markEmptyLetters() {
+  const present = new Set(ALL.map(e => normalize(e.terme || '')[0]?.toUpperCase()));
+  document.querySelectorAll('.alpha-btn').forEach(btn => {
+    btn.classList.toggle('empty', !present.has(btn.dataset.l));
+  });
+}
+
+function buildBodyHtml(entry) {
+  const precision   = entry.precision || '';
+  const explication = entry.explication || '';
+  const renvois     = entry.renvois || '';
+  const renvoisArr  = renvois
+    ? String(renvois).split(/[,;]+/).map(s => s.trim()).filter(Boolean)
+    : [];
+  const tagsHtml = renvoisArr
+    .map(r => `<span class="tag" data-search="${r}">${r}</span>`)
+    .join('');
+
+  return `
+    ${precision   ? `<div class="field-content">${precision}</div>`   : ''}
+    ${explication ? `<div class="field-content" style="font-style:italic">${explication}</div>` : ''}
+    ${renvoisArr.length
+      ? `<div class="field-label">Voir aussi</div><div class="tags">${tagsHtml}</div>`
+      : ''}
+  `;
+}
+
+function buildHeaderHtml(entry) {
+  const terme    = entry.terme || '';
+  const deroule  = entry.deroule || '';
+  const variante = entry.variante || '';
+  const def      = entry.definition || '';
+  return `
+    <div class="entry-term">${terme}${deroule ? ` - ${deroule}` : ''}</div>
+    ${variante ? `<div class="entry-variante">${variante}</div>` : ''}
+    <div class="entry-def-short">${def}</div>
+  `;
+}
+
+function showEntry(entry) {
+  document.getElementById('suggestions').classList.remove('open');
+  document.getElementById('entries').innerHTML = `
+    <div class="entry">
+      ${buildHeaderHtml(entry)}
+      <div class="entry-body">${buildBodyHtml(entry)}</div>
+    </div>`;
+}
+
+function showLetterList(letter) {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('suggestions').classList.remove('open');
+
+  document.querySelectorAll('.alpha-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.l === letter)
+  );
+
+  const matches = ALL
+    .filter(e => normalize(e.terme || '')[0]?.toUpperCase() === letter)
+    .sort((a, b) => normalize(a.terme).localeCompare(normalize(b.terme)));
+
+  if (!matches.length) {
+    document.getElementById('entries').innerHTML = `<div class="state-msg">Aucun terme pour la lettre ${letter}.</div>`;
+    return;
+  }
+
+  const html = matches.map((e, i) => `
+    <div class="word-list-item" data-idx="${i}">
+      ${buildHeaderHtml(e).replace('entry-term', 'word-list-term').replace('entry-variante', 'word-list-variante').replace('entry-def-short', 'word-list-def')}
+      <div class="word-list-body">${buildBodyHtml(e)}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('entries').innerHTML = html;
+  document.getElementById('entries')._matches = matches;
+}
+
+function showHome() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('suggestions').classList.remove('open');
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+  if (ALL.length) {
+    const pick = ALL[Math.floor(Math.random() * ALL.length)];
+    showEntry(pick);
+  } else {
+    document.getElementById('entries').innerHTML = '';
+  }
+}
+
+function showSuggestions(q) {
+  const sugg = document.getElementById('suggestions');
+  if (!q) { sugg.classList.remove('open'); return; }
+
+  const q_norm = normalize(q);
+  const matches = ALL.filter(e =>
+    normalize(e.terme).includes(q_norm) ||
+    normalize(e.deroule || '').includes(q_norm) ||
+    normalize(e.variante || '').includes(q_norm)
+  ).slice(0, 8);
+
+  if (!matches.length) { sugg.classList.remove('open'); return; }
+
+  sugg.innerHTML = matches.map((e, i) => {
+    const viaAutre = !normalize(e.terme).includes(q_norm);
+    const extra = viaAutre
+      ? (normalize(e.deroule || '').includes(q_norm) ? e.deroule : e.variante)
+      : '';
+    return `<div class="suggestion-item" data-idx="${i}">
+      ${e.terme}${extra ? `<span style="color:var(--c-muted);font-size:0.78rem;margin-left:6px;font-style:italic;">${extra}</span>` : ''}
+    </div>`;
+  }).join('');
+  sugg._matches = matches;
+  sugg.classList.add('open');
+}
+
+function doSearch() {
+  const sugg = document.getElementById('suggestions');
+  if (sugg._matches && sugg._matches.length) {
+    document.getElementById('searchInput').value = sugg._matches[0].terme;
+    showEntry(sugg._matches[0]);
+  }
+  sugg.classList.remove('open');
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  showSuggestions(e.target.value);
+});
+
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  const sugg  = document.getElementById('suggestions');
+  const items = sugg.querySelectorAll('.suggestion-item');
+  let highlighted = sugg.querySelector('.suggestion-item.highlighted');
+  let idx = Array.from(items).indexOf(highlighted);
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (highlighted) highlighted.classList.remove('highlighted');
+    idx = (idx + 1) % items.length;
+    items[idx].classList.add('highlighted');
+    items[idx].scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (highlighted) highlighted.classList.remove('highlighted');
+    idx = (idx - 1 + items.length) % items.length;
+    items[idx].classList.add('highlighted');
+    items[idx].scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'Enter') {
+    if (highlighted && sugg._matches) {
+      const entry = sugg._matches[Array.from(items).indexOf(highlighted)];
+      document.getElementById('searchInput').value = entry.terme;
+      showEntry(entry);
+      sugg.classList.remove('open');
+      document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+    } else {
+      doSearch();
+    }
+  } else if (e.key === 'Escape') {
+    sugg.classList.remove('open');
+  }
+});
+
+document.getElementById('suggestions').addEventListener('click', e => {
+  const item = e.target.closest('.suggestion-item');
+  if (!item) return;
+  const sugg  = document.getElementById('suggestions');
+  const entry = sugg._matches[parseInt(item.dataset.idx)];
+  document.getElementById('searchInput').value = entry.terme;
+  showEntry(entry);
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+});
+
+document.getElementById('searchBtn').addEventListener('click', doSearch);
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) {
+    document.getElementById('suggestions').classList.remove('open');
+  }
+});
+
+document.getElementById('alphNav').addEventListener('click', e => {
+  const btn = e.target.closest('.alpha-btn');
+  if (!btn || btn.classList.contains('empty')) return;
+  showLetterList(btn.dataset.l);
+});
+
+document.getElementById('randomBtn').addEventListener('click', () => {
+  if (!ALL.length) return;
+  const pick = ALL[Math.floor(Math.random() * ALL.length)];
+  document.getElementById('searchInput').value = pick.terme;
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+  showEntry(pick);
+});
+
+document.getElementById('homeLink').addEventListener('click', e => {
+  e.preventDefault();
+  showHome();
+});
+
+document.getElementById('entries').addEventListener('click', e => {
+  const tag = e.target.closest('.tag');
+  if (tag) {
+    e.stopPropagation();
+    const s     = tag.dataset.search;
+    const match = ALL.find(en => normalize(en.terme) === normalize(s));
+    document.getElementById('searchInput').value = s;
+    document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+    if (match) showEntry(match);
+    else showSuggestions(s);
+    return;
+  }
+
+  const item = e.target.closest('.word-list-item');
+  if (item) {
+    item.classList.toggle('expanded');
+  }
+});
+
+document.getElementById('entries').innerHTML = `<div class="state-msg">Chargement…</div>`;
+loadData();
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le Dico Cyber</title>
+<title>Le CyberDex</title>
 <style>
   :root {
     --c-bg: #0a0e14;
@@ -19,12 +19,31 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body { width: 100%; overflow-x: hidden; }
+
   body {
     background: var(--c-bg);
     color: var(--c-text);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+  }
+
+  /* Léger effet scanline en fond, très discret */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,255,157,0.012) 0px,
+      rgba(0,255,157,0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 0;
   }
 
   @keyframes blink { 50% { opacity: 0; } }
@@ -32,12 +51,16 @@
   header {
     background: var(--c-bg);
     color: var(--c-neon);
-    padding: 2rem 1.5rem 1.25rem;
+    padding: 2.25rem 1.5rem 1.5rem;
     border-bottom: 1px solid #00ff9d33;
+    position: relative;
+    z-index: 1;
   }
 
+  header .container { padding-top: 0; padding-bottom: 0; }
+
   header h1 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: 1px;
   }
@@ -50,94 +73,133 @@
   }
 
   header p {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     color: var(--c-muted);
-    margin-top: 4px;
+    margin-top: 6px;
+    letter-spacing: 0.2px;
   }
 
   .container {
     width: 100%;
-    max-width: 860px;
+    max-width: 980px;
     margin: 0 auto;
-    padding: 1.5rem 1rem;
+    padding: 1.75rem 1rem;
     flex: 1;
     box-sizing: border-box;
-  }
-
-  html, body { width: 100%; overflow-x: hidden; }
-
-  /* Toolbar */
-  .toolbar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 1rem;
-    align-items: center;
-  }
-
-  .search-wrap {
-    flex: 1;
     position: relative;
+    z-index: 1;
   }
 
-  .search-wrap svg {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+  .section-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
     color: var(--c-muted);
-    pointer-events: none;
+    margin: 0 0 0.7rem 2px;
   }
+  .section-label::before { content: "// "; color: var(--c-neon-dim); }
 
-  #searchInput {
-    width: 100%;
-    padding: 0.65rem 1rem 0.65rem 2.5rem;
-    border: 1px solid var(--c-border);
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-family: inherit;
+  /* ─── Carte terminal mise en avant : LE DICO CYBER ─── */
+  .terminal-card {
     background: var(--c-surface);
-    color: var(--c-neon);
-    transition: border-color 0.15s;
-    outline: none;
+    border: 1px solid #00ff9d55;
+    border-radius: 6px;
+    margin-bottom: 2.25rem;
+    box-shadow: 0 0 0 1px rgba(0,255,157,0.05), 0 8px 30px rgba(0,255,157,0.06);
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
   }
 
-  #searchInput::placeholder { color: var(--c-muted); }
-  #searchInput:focus { border-color: var(--c-neon); }
-
-  /* Dropdown suggestions */
-  #suggestions {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    background: var(--c-surface);
-    border: 1px solid var(--c-neon);
-    border-radius: 4px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-    z-index: 100;
-    max-height: 280px;
-    overflow-y: auto;
-    display: none;
+  .terminal-card:hover {
+    border-color: var(--c-neon);
+    box-shadow: 0 0 0 1px rgba(0,255,157,0.15), 0 10px 40px rgba(0,255,157,0.12);
   }
 
-  #suggestions.open { display: block; }
-
-  .suggestion-item {
-    padding: 0.6rem 1rem;
-    font-size: 0.82rem;
-    cursor: pointer;
-    color: var(--c-text);
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.6rem 0.9rem;
+    background: #0d1219;
     border-bottom: 1px solid var(--c-border);
-    transition: background 0.1s;
   }
 
-  .suggestion-item:last-child { border-bottom: none; }
-  .suggestion-item:hover,
-  .suggestion-item.highlighted { background: #00ff9d18; color: var(--c-neon); }
+  .terminal-dot {
+    width: 8px; height: 8px;
+    border-radius: 1px;
+    background: var(--c-border-hover);
+  }
 
-  /* Search button */
-  #searchBtn {
-    padding: 0.65rem 1.2rem;
+  .terminal-bar span.path {
+    margin-left: 10px;
+    font-size: 0.68rem;
+    color: var(--c-muted);
+    letter-spacing: 0.3px;
+  }
+
+  .terminal-body {
+    padding: 1.5rem 1.6rem 1.7rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .terminal-left { flex: 1; min-width: 220px; }
+
+  .terminal-eyebrow {
+    font-size: 0.68rem;
+    color: var(--c-neon-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .terminal-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--c-neon);
+    letter-spacing: 0.3px;
+    margin-bottom: 0.6rem;
+  }
+
+  .terminal-line {
+    font-size: 0.86rem;
+    color: var(--c-text);
+    min-height: 1.3em;
+    white-space: pre;
+  }
+
+  .terminal-line .prompt { color: var(--c-neon-dim); }
+  .terminal-line .cursor {
+    display: inline-block;
+    width: 7px; height: 1em;
+    background: var(--c-neon);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.9s steps(1) infinite;
+  }
+
+  .terminal-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.6rem;
+  }
+
+  .terminal-count {
+    font-size: 0.72rem;
+    color: var(--c-muted);
+  }
+  .terminal-count b { color: var(--c-neon); font-weight: 700; }
+
+  .cta-btn {
+    padding: 0.7rem 1.3rem;
     background: transparent;
     color: var(--c-neon);
     border: 1px solid var(--c-neon);
@@ -146,195 +208,71 @@
     font-family: inherit;
     font-weight: 700;
     letter-spacing: 0.5px;
-    cursor: pointer;
     white-space: nowrap;
     transition: all 0.15s;
   }
 
-  #searchBtn:hover { background: #00ff9d18; }
+  .terminal-card:hover .cta-btn { background: #00ff9d18; }
 
-  /* Alpha nav */
-  .alpha-nav {
+  /* ─── Grille des rubriques ─── */
+  .tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tile {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: 6px;
+    padding: 1.1rem 1.1rem 1.15rem;
+    text-decoration: none;
+    color: inherit;
     display: flex;
-    flex-wrap: nowrap;
-    gap: 2px;
-    margin-bottom: 0.85rem;
+    flex-direction: column;
+    gap: 0.55rem;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+
+  .tile:hover {
+    border-color: var(--c-neon);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,255,157,0.08);
+  }
+
+  .tile-top {
+    display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
-  .alpha-btn {
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    border-radius: 2px;
-    border: none;
-    background: var(--c-surface);
-    font-size: 0.68rem;
-    font-family: inherit;
-    font-weight: 700;
-    cursor: pointer;
+  .tile-icon {
     color: var(--c-neon-dim);
-    transition: all 0.12s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    transition: color 0.15s;
   }
+  .tile:hover .tile-icon { color: var(--c-neon); }
 
-  .alpha-btn:hover { background: var(--c-neon); color: var(--c-bg); }
-  .alpha-btn.active { background: var(--c-neon); color: var(--c-bg); }
-  .alpha-btn.empty { opacity: 0.25; cursor: default; pointer-events: none; color: var(--c-border); }
-
-  /* Random button */
-  #randomBtn {
-    width: 100%;
-    padding: 0.6rem 1rem;
-    background: transparent;
-    color: var(--c-neon);
-    border: 1px solid var(--c-neon);
-    border-radius: 4px;
-    font-size: 0.78rem;
-    font-family: inherit;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.15s;
-    margin-bottom: 1.5rem;
-  }
-
-  #randomBtn:hover { background: #00ff9d18; }
-
-  /* Liste des mots (vue par lettre) */
-  .word-list-item {
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
-    border-left: 2px solid var(--c-neon-dim);
-    border-radius: 4px;
-    padding: 0.85rem 1.1rem;
-    margin-bottom: 0.6rem;
-    cursor: pointer;
-    transition: border-color 0.15s;
-  }
-
-  .word-list-item:hover { border-left-color: var(--c-neon); }
-  .word-list-item.expanded { border-left-color: var(--c-neon); }
-
-  .word-list-term {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--c-neon);
-    letter-spacing: 0.3px;
-  }
-
-  .word-list-variante {
-    font-size: 0.74rem;
-    font-style: italic;
-    color: #7fffd4;
-    margin-top: 0.15rem;
-  }
-
-  .word-list-def {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--c-text);
-    margin-top: 0.4rem;
-    line-height: 1.55;
-  }
-
-  .word-list-body {
-    display: none;
-    margin-top: 0.85rem;
-    padding-top: 0.85rem;
-    border-top: 1px solid var(--c-border);
-  }
-
-  .word-list-item.expanded .word-list-body { display: block; }
-
-  /* Entry card (recherche directe) */
-  .entry {
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
-    border-left: 2px solid var(--c-neon);
-    border-radius: 4px;
-    padding: 1.1rem 1.25rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .entry-term {
-    font-size: 0.98rem;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    color: var(--c-neon);
-  }
-
-  .entry-variante {
-    font-size: 0.74rem;
-    font-weight: 400;
-    color: #7fffd4;
-    font-style: italic;
-    margin-top: 0.15rem;
-  }
-
-  .entry-def-short {
-    font-size: 0.8rem;
-    color: var(--c-text);
-    font-weight: 700;
-    margin-top: 0.4rem;
-    line-height: 1.55;
-  }
-
-  .entry-body {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--c-border);
-  }
-
-  .field-label {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+  .tile-count-badge {
+    font-size: 0.62rem;
     color: var(--c-muted);
-    margin-bottom: 0.3rem;
-    margin-top: 0.9rem;
-  }
-
-  .field-label:first-child { margin-top: 0; }
-
-  .field-content {
-    font-size: 0.82rem;
-    line-height: 1.6;
-    color: var(--c-muted);
-    margin-bottom: 0.5rem;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 0.3rem;
-  }
-
-  .tag {
-    background: var(--c-bg);
-    color: var(--c-neon);
-    border: 1px solid #00ff9d55;
+    border: 1px solid var(--c-border);
     border-radius: 20px;
-    font-size: 0.72rem;
-    font-family: inherit;
-    padding: 3px 10px;
-    cursor: pointer;
-    transition: background 0.12s;
+    padding: 2px 8px;
+    letter-spacing: 0.2px;
   }
 
-  .tag:hover { background: #00ff9d18; }
+  .tile-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: var(--c-neon);
+  }
 
-  .state-msg {
-    text-align: center;
-    padding: 3rem 1rem;
+  .tile-desc {
+    font-size: 0.75rem;
+    line-height: 1.5;
     color: var(--c-muted);
-    font-size: 0.82rem;
   }
 
   footer {
@@ -344,88 +282,142 @@
     text-align: center;
     padding: 1rem;
     font-size: 0.72rem;
+    position: relative;
+    z-index: 1;
   }
 
   @media (max-width: 600px) {
-    header { padding: 1.25rem 1rem 1rem; }
-    header h1 { font-size: 1.15rem; }
-    .container { padding: 1rem 0.75rem; }
+    header { padding: 1.5rem 1rem 1.1rem; }
+    header h1 { font-size: 1.25rem; }
+    .container { padding: 1.25rem 0.75rem; }
 
-    .toolbar { gap: 8px; }
-    #searchInput { font-size: 16px; padding: 0.6rem 0.9rem 0.6rem 2.3rem; }
-    #searchBtn { padding: 0.6rem 0.9rem; font-size: 0.72rem; }
+    .terminal-body { flex-direction: column; align-items: stretch; }
+    .terminal-right { align-items: flex-start; }
+    .terminal-title { font-size: 1.1rem; }
 
-    .alpha-nav { gap: 1px; }
-    .alpha-btn { width: 16px; height: 20px; font-size: 0.58rem; }
-
-    #randomBtn { font-size: 0.72rem; padding: 0.55rem 1rem; }
-
-    .entry, .word-list-item { padding: 0.85rem 1rem; }
-    .entry-term, .word-list-term { font-size: 0.88rem; }
-    .entry-def-short, .word-list-def { font-size: 0.78rem; }
-    .field-content { font-size: 0.8rem; }
-
-    #suggestions { max-height: 220px; }
+    .tiles-grid { grid-template-columns: repeat(2, 1fr); gap: 0.65rem; }
+    .tile { padding: 0.9rem 0.9rem 1rem; }
   }
 
   @media (max-width: 380px) {
-    .alpha-nav { gap: 0; }
-    .alpha-btn { width: 13px; font-size: 0.5rem; }
+    .tiles-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    header h1::after, .terminal-line .cursor { animation: none; opacity: 0.6; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="container" style="padding-top:0;padding-bottom:0;">
-    <h1><a href="#" id="homeLink" style="color:inherit;text-decoration:none;cursor:pointer;">LE_DICO_CYBER</a></h1>
-    <p id="lastUpdate">Chargement…</p>
+  <div class="container">
+    <h1>LE_CYBERDEX</h1>
+    <p>Base de connaissance cyber — dictionnaire, repères, menaces &amp; bonnes pratiques</p>
   </div>
 </header>
 
 <div class="container">
 
-  <div class="toolbar">
-    <div class="search-wrap">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="searchInput" placeholder="rechercher_un_terme..." autocomplete="off" />
-      <div id="suggestions"></div>
+  <div class="section-label">accès rapide</div>
+
+  <a class="terminal-card" href="dicocyber.html" id="dicoCard">
+    <div class="terminal-bar">
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="path">~/cyberdex/dico_cyber</span>
     </div>
-    <button id="searchBtn">[ RECHERCHE ]</button>
+    <div class="terminal-body">
+      <div class="terminal-left">
+        <div class="terminal-eyebrow">Le lexique de référence</div>
+        <div class="terminal-title">LE DICO CYBER</div>
+        <div class="terminal-line"><span class="prompt">&gt;</span> <span id="typedQuery"></span><span class="cursor"></span></div>
+      </div>
+      <div class="terminal-right">
+        <div class="terminal-count" id="dicoCount">chargement…</div>
+        <span class="cta-btn">[ OUVRIR_LE_DICO ]</span>
+      </div>
+    </div>
+  </a>
+
+  <div class="section-label">rubriques</div>
+
+  <div class="tiles-grid" id="tilesGrid">
+
+    <a class="tile" href="comprendre.html" data-sheet="comprendre">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">COMPRENDRE</div>
+      <div class="tile-desc">Panoramas et fondamentaux pour saisir les enjeux cyber.</div>
+    </a>
+
+    <a class="tile" href="dater.html" data-sheet="dater">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">DATER</div>
+      <div class="tile-desc">Repères chronologiques : incidents, lois, ruptures.</div>
+    </a>
+
+    <a class="tile" href="redteam.html" data-sheet="redteam">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 3.8 8.5 9 10 5.2-1.5 9-5 9-10V6l-9-4z"/><path d="m9.5 12 2 2 4-4"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">RED TEAM</div>
+      <div class="tile-desc">Techniques offensives, intrusion, exploitation.</div>
+    </a>
+
+    <a class="tile" href="menacer.html" data-sheet="menacer">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M10.3 3.9 2.5 17a1.5 1.5 0 0 0 1.3 2.2h16.4a1.5 1.5 0 0 0 1.3-2.2L13.7 3.9a1.6 1.6 0 0 0-2.8 0z"/><path d="M12 9v4M12 16.5h.01"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">MENACER</div>
+      <div class="tile-desc">Panorama des menaces, acteurs, modes opératoires.</div>
+    </a>
+
+    <a class="tile" href="bleuteam.html" data-sheet="bleuteam">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 3.8 8.5 9 10 5.2-1.5 9-5 9-10V6l-9-4z"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">BLEU TEAM</div>
+      <div class="tile-desc">Défense, détection, réponse à incident.</div>
+    </a>
+
+    <a class="tile" href="proteger.html" data-sheet="proteger">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">PROTÉGER</div>
+      <div class="tile-desc">Bonnes pratiques, hygiène numérique, durcissement.</div>
+    </a>
+
+    <a class="tile" href="sengager.html" data-sheet="sengager">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M17 8.5a3 3 0 1 1 0-6M21.5 20c0-3-2-5.2-4.8-5.8"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">S'ENGAGER</div>
+      <div class="tile-desc">Carrières, formations, communautés cyber.</div>
+    </a>
+
+    <a class="tile" href="reguler.html" data-sheet="reguler">
+      <div class="tile-top">
+        <span class="tile-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM19 7l-3 6a3.5 3.5 0 0 0 7 0l-3-6zM5 7h14M9 21h6"/></svg></span>
+        <span class="tile-count-badge" data-count>—</span>
+      </div>
+      <div class="tile-title">RÉGULER</div>
+      <div class="tile-desc">Cadres juridiques, normes, conformité.</div>
+    </a>
+
   </div>
-
-  <div class="alpha-nav" id="alphNav">
-    <button class="alpha-btn" data-l="A">A</button>
-    <button class="alpha-btn" data-l="B">B</button>
-    <button class="alpha-btn" data-l="C">C</button>
-    <button class="alpha-btn" data-l="D">D</button>
-    <button class="alpha-btn" data-l="E">E</button>
-    <button class="alpha-btn" data-l="F">F</button>
-    <button class="alpha-btn" data-l="G">G</button>
-    <button class="alpha-btn" data-l="H">H</button>
-    <button class="alpha-btn" data-l="I">I</button>
-    <button class="alpha-btn" data-l="J">J</button>
-    <button class="alpha-btn" data-l="K">K</button>
-    <button class="alpha-btn" data-l="L">L</button>
-    <button class="alpha-btn" data-l="M">M</button>
-    <button class="alpha-btn" data-l="N">N</button>
-    <button class="alpha-btn" data-l="O">O</button>
-    <button class="alpha-btn" data-l="P">P</button>
-    <button class="alpha-btn" data-l="Q">Q</button>
-    <button class="alpha-btn" data-l="R">R</button>
-    <button class="alpha-btn" data-l="S">S</button>
-    <button class="alpha-btn" data-l="T">T</button>
-    <button class="alpha-btn" data-l="U">U</button>
-    <button class="alpha-btn" data-l="V">V</button>
-    <button class="alpha-btn" data-l="W">W</button>
-    <button class="alpha-btn" data-l="X">X</button>
-    <button class="alpha-btn" data-l="Y">Y</button>
-    <button class="alpha-btn" data-l="Z">Z</button>
-  </div>
-
-  <button id="randomBtn">[ UN_MOT_ALÉATOIRE ]</button>
-
-  <div id="entries"></div>
 
 </div>
 
@@ -433,287 +425,82 @@
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────
-const SHEET_ID   = '1BAsZeJRP0eYepRGD6hVNmNpXw1kcMPkbbt7s_W7nkjA';
-const SHEET_NAME = 'Dico_Cyber';
-// Colonnes lues par nom : terme | deroule | variante | definition | precision | explication | renvois
+// Base de données : BDD_CyberDex (Google Sheet)
+const SHEET_ID = '1BAsZeJRP0eYepRGD6hVNmNpXw1kcMPkbbt7s_W7nkjA';
+// Colonnes des onglets rubriques : titre | accroche | contenu | image
+// Onglet du dico : Dico_Cyber (colonne pivot : terme)
 // ──────────────────────────────────────────────────────────────────────────
 
-let ALL = [];
+async function fetchTabRowCount(sheetName, titleKeys) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  const res  = await fetch(url);
+  const text = await res.text();
+  const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1]);
+  const rows = json.table.rows || [];
 
-function normalize(str) {
-  return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-}
-
-async function loadData() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
-  try {
-    const res  = await fetch(url);
-    const text = await res.text();
-    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1]);
-    const rows = json.table.rows;
-
-    const firstRow = rows[0]?.c?.map(c => (c?.v || '').toLowerCase().trim()) || [];
-    const hasHeader = firstRow.includes('terme');
-    const dataRows  = hasHeader ? rows.slice(1) : rows;
-
-    const idx = {
-      terme:       firstRow.indexOf('terme'),
-      deroule:     firstRow.indexOf('deroule'),
-      variante:    firstRow.indexOf('variante'),
-      definition:  firstRow.indexOf('definition'),
-      precision:   firstRow.indexOf('precision'),
-      explication: firstRow.indexOf('explication'),
-      renvois:     firstRow.indexOf('renvois'),
-    };
-
-    const col = (r, key) => (idx[key] >= 0 ? r.c[idx[key]]?.v : null) ?? '';
-
-    ALL = dataRows.map(r => ({
-      terme:       col(r, 'terme'),
-      deroule:     col(r, 'deroule'),
-      variante:    col(r, 'variante'),
-      definition:  col(r, 'definition'),
-      precision:   col(r, 'precision'),
-      explication: col(r, 'explication'),
-      renvois:     col(r, 'renvois'),
-    })).filter(r => r.terme);
-
-    const count = ALL.length;
-    document.getElementById('lastUpdate').textContent =
-      `${count} termes · amendés régulièrement`;
-
-    markEmptyLetters();
-
-    if (ALL.length) {
-      const pick = ALL[Math.floor(Math.random() * ALL.length)];
-      showEntry(pick);
-    }
-  } catch(e) {
-    console.error(e);
+  const firstRow = rows[0]?.c?.map(c => (c?.v || '').toLowerCase().trim()) || [];
+  let titleIdx = -1;
+  for (const key of titleKeys) {
+    const i = firstRow.indexOf(key);
+    if (i >= 0) { titleIdx = i; break; }
   }
+  const hasHeader = titleIdx >= 0;
+  const dataRows  = hasHeader ? rows.slice(1) : rows;
+  if (!hasHeader) return dataRows.length; // pas d'en-tête détecté, on compte les lignes non vides
+
+  return dataRows.filter(r => (r.c?.[titleIdx]?.v || '').toString().trim()).length;
 }
 
-function markEmptyLetters() {
-  const present = new Set(ALL.map(e => normalize(e.terme || '')[0]?.toUpperCase()));
-  document.querySelectorAll('.alpha-btn').forEach(btn => {
-    btn.classList.toggle('empty', !present.has(btn.dataset.l));
+// Compteur de la carte Dico Cyber (colonne "terme")
+fetchTabRowCount('Dico_Cyber', ['terme']).then(count => {
+  document.getElementById('dicoCount').innerHTML = `<b>${count}</b> termes référencés`;
+}).catch(() => {
+  document.getElementById('dicoCount').textContent = '';
+});
+
+// Compteurs des rubriques (colonne "titre")
+document.querySelectorAll('.tile[data-sheet]').forEach(tile => {
+  const sheet = tile.dataset.sheet;
+  fetchTabRowCount(sheet, ['titre']).then(count => {
+    const badge = tile.querySelector('[data-count]');
+    badge.textContent = count > 0 ? `${count} fiche${count > 1 ? 's' : ''}` : 'à venir';
+  }).catch(() => {
+    const badge = tile.querySelector('[data-count]');
+    badge.textContent = '';
   });
-}
-
-function buildBodyHtml(entry) {
-  const precision   = entry.precision || '';
-  const explication = entry.explication || '';
-  const renvois     = entry.renvois || '';
-  const renvoisArr  = renvois
-    ? String(renvois).split(/[,;]+/).map(s => s.trim()).filter(Boolean)
-    : [];
-  const tagsHtml = renvoisArr
-    .map(r => `<span class="tag" data-search="${r}">${r}</span>`)
-    .join('');
-
-  return `
-    ${precision   ? `<div class="field-content">${precision}</div>`   : ''}
-    ${explication ? `<div class="field-content" style="font-style:italic">${explication}</div>` : ''}
-    ${renvoisArr.length
-      ? `<div class="field-label">Voir aussi</div><div class="tags">${tagsHtml}</div>`
-      : ''}
-  `;
-}
-
-function buildHeaderHtml(entry) {
-  const terme    = entry.terme || '';
-  const deroule  = entry.deroule || '';
-  const variante = entry.variante || '';
-  const def      = entry.definition || '';
-  return `
-    <div class="entry-term">${terme}${deroule ? ` - ${deroule}` : ''}</div>
-    ${variante ? `<div class="entry-variante">${variante}</div>` : ''}
-    <div class="entry-def-short">${def}</div>
-  `;
-}
-
-function showEntry(entry) {
-  document.getElementById('suggestions').classList.remove('open');
-  document.getElementById('entries').innerHTML = `
-    <div class="entry">
-      ${buildHeaderHtml(entry)}
-      <div class="entry-body">${buildBodyHtml(entry)}</div>
-    </div>`;
-}
-
-function showLetterList(letter) {
-  document.getElementById('searchInput').value = '';
-  document.getElementById('suggestions').classList.remove('open');
-
-  document.querySelectorAll('.alpha-btn').forEach(b =>
-    b.classList.toggle('active', b.dataset.l === letter)
-  );
-
-  const matches = ALL
-    .filter(e => normalize(e.terme || '')[0]?.toUpperCase() === letter)
-    .sort((a, b) => normalize(a.terme).localeCompare(normalize(b.terme)));
-
-  if (!matches.length) {
-    document.getElementById('entries').innerHTML = `<div class="state-msg">Aucun terme pour la lettre ${letter}.</div>`;
-    return;
-  }
-
-  const html = matches.map((e, i) => `
-    <div class="word-list-item" data-idx="${i}">
-      ${buildHeaderHtml(e).replace('entry-term', 'word-list-term').replace('entry-variante', 'word-list-variante').replace('entry-def-short', 'word-list-def')}
-      <div class="word-list-body">${buildBodyHtml(e)}</div>
-    </div>
-  `).join('');
-
-  document.getElementById('entries').innerHTML = html;
-  document.getElementById('entries')._matches = matches;
-}
-
-function showHome() {
-  document.getElementById('searchInput').value = '';
-  document.getElementById('suggestions').classList.remove('open');
-  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
-  if (ALL.length) {
-    const pick = ALL[Math.floor(Math.random() * ALL.length)];
-    showEntry(pick);
-  } else {
-    document.getElementById('entries').innerHTML = '';
-  }
-}
-
-function showSuggestions(q) {
-  const sugg = document.getElementById('suggestions');
-  if (!q) { sugg.classList.remove('open'); return; }
-
-  const q_norm = normalize(q);
-  const matches = ALL.filter(e =>
-    normalize(e.terme).includes(q_norm) ||
-    normalize(e.deroule || '').includes(q_norm) ||
-    normalize(e.variante || '').includes(q_norm)
-  ).slice(0, 8);
-
-  if (!matches.length) { sugg.classList.remove('open'); return; }
-
-  sugg.innerHTML = matches.map((e, i) => {
-    const viaAutre = !normalize(e.terme).includes(q_norm);
-    const extra = viaAutre
-      ? (normalize(e.deroule || '').includes(q_norm) ? e.deroule : e.variante)
-      : '';
-    return `<div class="suggestion-item" data-idx="${i}">
-      ${e.terme}${extra ? `<span style="color:var(--c-muted);font-size:0.78rem;margin-left:6px;font-style:italic;">${extra}</span>` : ''}
-    </div>`;
-  }).join('');
-  sugg._matches = matches;
-  sugg.classList.add('open');
-}
-
-function doSearch() {
-  const sugg = document.getElementById('suggestions');
-  if (sugg._matches && sugg._matches.length) {
-    document.getElementById('searchInput').value = sugg._matches[0].terme;
-    showEntry(sugg._matches[0]);
-  }
-  sugg.classList.remove('open');
-  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
-}
-
-document.getElementById('searchInput').addEventListener('input', e => {
-  showSuggestions(e.target.value);
 });
 
-document.getElementById('searchInput').addEventListener('keydown', e => {
-  const sugg  = document.getElementById('suggestions');
-  const items = sugg.querySelectorAll('.suggestion-item');
-  let highlighted = sugg.querySelector('.suggestion-item.highlighted');
-  let idx = Array.from(items).indexOf(highlighted);
+// Effet "terminal vivant" sur la carte Dico Cyber : recherches simulées
+const sampleQueries = ['grep -i ransomware', 'lookup phishing', 'find zero-day', 'grep -i rgpd'];
+let qIdx = 0;
+const typedEl = document.getElementById('typedQuery');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    if (highlighted) highlighted.classList.remove('highlighted');
-    idx = (idx + 1) % items.length;
-    items[idx].classList.add('highlighted');
-    items[idx].scrollIntoView({ block: 'nearest' });
-
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    if (highlighted) highlighted.classList.remove('highlighted');
-    idx = (idx - 1 + items.length) % items.length;
-    items[idx].classList.add('highlighted');
-    items[idx].scrollIntoView({ block: 'nearest' });
-
-  } else if (e.key === 'Enter') {
-    if (highlighted && sugg._matches) {
-      const entry = sugg._matches[Array.from(items).indexOf(highlighted)];
-      document.getElementById('searchInput').value = entry.terme;
-      showEntry(entry);
-      sugg.classList.remove('open');
-      document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
-    } else {
-      doSearch();
+function typeLoop() {
+  if (reduceMotion) { typedEl.textContent = sampleQueries[0]; return; }
+  const full = sampleQueries[qIdx % sampleQueries.length];
+  let i = 0;
+  typedEl.textContent = '';
+  const typeInt = setInterval(() => {
+    i++;
+    typedEl.textContent = full.slice(0, i);
+    if (i >= full.length) {
+      clearInterval(typeInt);
+      setTimeout(() => {
+        const eraseInt = setInterval(() => {
+          i--;
+          typedEl.textContent = full.slice(0, i);
+          if (i <= 0) {
+            clearInterval(eraseInt);
+            qIdx++;
+            setTimeout(typeLoop, 300);
+          }
+        }, 35);
+      }, 1400);
     }
-  } else if (e.key === 'Escape') {
-    sugg.classList.remove('open');
-  }
-});
-
-document.getElementById('suggestions').addEventListener('click', e => {
-  const item = e.target.closest('.suggestion-item');
-  if (!item) return;
-  const sugg  = document.getElementById('suggestions');
-  const entry = sugg._matches[parseInt(item.dataset.idx)];
-  document.getElementById('searchInput').value = entry.terme;
-  showEntry(entry);
-  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
-});
-
-document.getElementById('searchBtn').addEventListener('click', doSearch);
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('.search-wrap')) {
-    document.getElementById('suggestions').classList.remove('open');
-  }
-});
-
-document.getElementById('alphNav').addEventListener('click', e => {
-  const btn = e.target.closest('.alpha-btn');
-  if (!btn || btn.classList.contains('empty')) return;
-  showLetterList(btn.dataset.l);
-});
-
-document.getElementById('randomBtn').addEventListener('click', () => {
-  if (!ALL.length) return;
-  const pick = ALL[Math.floor(Math.random() * ALL.length)];
-  document.getElementById('searchInput').value = pick.terme;
-  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
-  showEntry(pick);
-});
-
-document.getElementById('homeLink').addEventListener('click', e => {
-  e.preventDefault();
-  showHome();
-});
-
-document.getElementById('entries').addEventListener('click', e => {
-  const tag = e.target.closest('.tag');
-  if (tag) {
-    e.stopPropagation();
-    const s     = tag.dataset.search;
-    const match = ALL.find(en => normalize(en.terme) === normalize(s));
-    document.getElementById('searchInput').value = s;
-    document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
-    if (match) showEntry(match);
-    else showSuggestions(s);
-    return;
-  }
-
-  const item = e.target.closest('.word-list-item');
-  if (item) {
-    item.classList.toggle('expanded');
-  }
-});
-
-document.getElementById('entries').innerHTML = `<div class="state-msg">Chargement…</div>`;
-loadData();
+  }, 55);
+}
+typeLoop();
 </script>
 </body>
 </html>
