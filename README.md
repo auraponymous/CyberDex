@@ -1,4 +1,4 @@
-# Le CyberDex — Explorer, comprendre et apprendre la cybersécurité
+# Le CyberDex — Explorer, comprendre et apprendre
 
 > *Le cyberespace est devenu un élément central de notre quotidien. Nous travaillons, communiquons, achetons, jouons et échangeons grâce à des technologies dont le fonctionnement reste souvent méconnu. Derrière chaque application, chaque site web ou chaque objet connecté se cachent des enjeux techniques, économiques, géopolitiques et humains qui façonnent désormais notre société.*
 
