@@ -227,15 +227,24 @@ function normalizeHeader(str) {
   return (str || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
 
-// Cherche la ligne d'en-tête parmi les 6 premières lignes du tableau (et pas
+// Cherche la ligne d'en-tête parmi les 15 premières lignes du tableau (et pas
 // uniquement la toute première), au cas où l'onglet contienne une bannière,
-// un titre de section ou une ligne vide au-dessus des en-têtes de colonnes.
+// des lignes de titre/formatage ou des lignes vides au-dessus des en-têtes.
+// Deux passes : d'abord une correspondance exacte sur "titre", puis, si rien
+// n'est trouvé, une correspondance partielle (ex. "Titre :", "Titre principal").
 function findHeaderRow(rows) {
-  const maxScan = Math.min(rows.length, 6);
+  const maxScan = Math.min(rows.length, 15);
+
   for (let i = 0; i < maxScan; i++) {
     const vals = (rows[i]?.c || []).map(c => normalizeHeader(c?.v));
     if (vals.includes('titre')) return { index: i, vals };
   }
+
+  for (let i = 0; i < maxScan; i++) {
+    const vals = (rows[i]?.c || []).map(c => normalizeHeader(c?.v));
+    if (vals.some(v => v && v.includes('titre'))) return { index: i, vals };
+  }
+
   return null;
 }
 
