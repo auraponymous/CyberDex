@@ -227,15 +227,24 @@ function normalizeHeader(str) {
   return (str || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
 
-// Cherche la ligne d'en-tête parmi les 6 premières lignes du tableau (et pas
+// Cherche la ligne d'en-tête parmi les 15 premières lignes du tableau (et pas
 // uniquement la toute première), au cas où l'onglet contienne une bannière,
-// un titre de section ou une ligne vide au-dessus des en-têtes de colonnes.
+// des lignes de titre/formatage ou des lignes vides au-dessus des en-têtes.
+// Deux passes : d'abord une correspondance exacte sur "titre", puis, si rien
+// n'est trouvé, une correspondance partielle (ex. "Titre :", "Titre principal").
 function findHeaderRow(rows) {
-  const maxScan = Math.min(rows.length, 6);
+  const maxScan = Math.min(rows.length, 15);
+
   for (let i = 0; i < maxScan; i++) {
     const vals = (rows[i]?.c || []).map(c => normalizeHeader(c?.v));
     if (vals.includes('titre')) return { index: i, vals };
   }
+
+  for (let i = 0; i < maxScan; i++) {
+    const vals = (rows[i]?.c || []).map(c => normalizeHeader(c?.v));
+    if (vals.some(v => v && v.includes('titre'))) return { index: i, vals };
+  }
+
   return null;
 }
 
@@ -254,18 +263,29 @@ async function loadData() {
   try {
     let json = null;
 
+    // IMPORTANT : quand le nom d'onglet demandé n'existe pas, Google ne renvoie
+    // pas d'erreur — il renvoie silencieusement les données du premier onglet
+    // du classeur (souvent Dico_Cyber). On ne peut donc pas se fier au seul
+    // statut "ok" : on n'accepte une variante que si elle contient réellement
+    // une ligne d'en-tête avec "titre", preuve qu'il s'agit bien du bon onglet.
+    let fallbackJson = null;
+    let fallbackHeader = null;
+
     for (const candidate of SHEET_CANDIDATES) {
       try {
         const result = await fetchSheetJson(candidate);
-        if (result && (result.table.rows || []).length > 0) {
+        if (!result) continue;
+        const candidateRows = result.table.rows || [];
+        const candidateHeader = findHeaderRow(candidateRows);
+        if (candidateHeader) {
           json = result;
           break;
         }
-        // On garde en réserve une réponse valide même vide, au cas où aucune
-        // variante ne contient de lignes (onglet réellement vide).
-        if (result && !json) json = result;
+        if (!fallbackJson) { fallbackJson = result; fallbackHeader = candidateHeader; }
       } catch (e) { /* on essaie la variante suivante */ }
     }
+
+    if (!json && fallbackJson) { json = fallbackJson; }
 
     const rows = json?.table?.rows || [];
 
@@ -298,9 +318,9 @@ async function loadData() {
 
     if (!articles.length) {
       const diag = !json
-        ? `Aucun onglet trouvé parmi : ${SHEET_CANDIDATES.join(', ')}.`
+        ? `Aucune de ces variantes de nom d'onglet n'a été trouvée avec une colonne "titre" : ${SHEET_CANDIDATES.join(', ')}. Google renvoie par défaut un autre onglet du classeur quand le nom demandé n'existe pas exactement — vérifie l'orthographe exacte de l'onglet (espace, majuscule, accent) directement dans Google Sheets.`
         : !header
-        ? `Onglet trouvé, mais aucune ligne d'en-tête "titre" détectée dans les 6 premières lignes.`
+        ? `Onglet trouvé, mais aucune ligne d'en-tête "titre" détectée dans les 15 premières lignes.`
         : `Onglet et en-tête trouvés, mais aucune ligne ne contient de titre.`;
       container.innerHTML = `<div class="state-msg">Aucune fiche n'est encore publiée dans cette rubrique.<br><span style="opacity:.6;font-size:.9em;">${diag}</span></div>`;
       return;
