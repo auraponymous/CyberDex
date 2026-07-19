@@ -223,6 +223,22 @@ function paragraphs(text) {
     .join('');
 }
 
+function normalizeHeader(str) {
+  return (str || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+// Cherche la ligne d'en-tête parmi les 6 premières lignes du tableau (et pas
+// uniquement la toute première), au cas où l'onglet contienne une bannière,
+// un titre de section ou une ligne vide au-dessus des en-têtes de colonnes.
+function findHeaderRow(rows) {
+  const maxScan = Math.min(rows.length, 6);
+  for (let i = 0; i < maxScan; i++) {
+    const vals = (rows[i]?.c || []).map(c => normalizeHeader(c?.v));
+    if (vals.includes('titre')) return { index: i, vals };
+  }
+  return null;
+}
+
 async function fetchSheetJson(sheetName) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
   const res  = await fetch(url);
@@ -253,9 +269,9 @@ async function loadData() {
 
     const rows = json?.table?.rows || [];
 
-    const firstRow = rows[0]?.c?.map(c => (c?.v || '').toLowerCase().trim()) || [];
-    const hasHeader = firstRow.includes('titre');
-    const dataRows  = hasHeader ? rows.slice(1) : rows;
+    const header    = findHeaderRow(rows);
+    const dataRows  = header ? rows.slice(header.index + 1) : rows;
+    const firstRow  = header ? header.vals : [];
 
     const idx = {
       titre:    firstRow.indexOf('titre'),
@@ -281,7 +297,12 @@ async function loadData() {
     const container = document.getElementById('articles');
 
     if (!articles.length) {
-      container.innerHTML = `<div class="state-msg">Aucune fiche n'est encore publiée dans cette rubrique.</div>`;
+      const diag = !json
+        ? `Aucun onglet trouvé parmi : ${SHEET_CANDIDATES.join(', ')}.`
+        : !header
+        ? `Onglet trouvé, mais aucune ligne d'en-tête "titre" détectée dans les 6 premières lignes.`
+        : `Onglet et en-tête trouvés, mais aucune ligne ne contient de titre.`;
+      container.innerHTML = `<div class="state-msg">Aucune fiche n'est encore publiée dans cette rubrique.<br><span style="opacity:.6;font-size:.9em;">${diag}</span></div>`;
       return;
     }
 
