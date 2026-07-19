@@ -37,20 +37,26 @@
     border-bottom: 1px solid #00ff9d33;
   }
 
-  .breadcrumb {
-    font-size: 0.72rem;
-    color: var(--c-muted);
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 0.6rem;
-    transition: color 0.15s;
-  }
-  .breadcrumb:hover { color: var(--c-neon); }
-
   header h1 {
     font-size: 1.4rem;
     font-weight: 700;
     letter-spacing: 1px;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.45em;
+  }
+
+  header h1 .crumb-home {
+    color: var(--c-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  header h1 .crumb-home:hover { color: var(--c-neon); }
+
+  header h1 .crumb-sep {
+    color: var(--c-muted);
+    font-weight: 400;
   }
 
   header h1::before { content: "> "; opacity: 0.7; }
@@ -178,9 +184,8 @@
 
 <header>
   <div class="container" style="padding-top:0;padding-bottom:0;">
-    <a class="breadcrumb" href="index.html">‹ LE_CYBERDEX</a>
-    <h1>MENACER</h1>
-    <p>Panorama des menaces, acteurs, modes opératoires.</p>
+    <h1><a class="crumb-home" href="index.html">LE_CYBERDEX</a><span class="crumb-sep">/</span>MENACER</h1>
+    <p>Panorama des menaces, modes opératoires.</p>
   </div>
 </header>
 
@@ -194,8 +199,11 @@
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────
 // Base de données : BDD_CyberDex (Google Sheet)
-const SHEET_ID   = '1BAsZeJRP0eYepRGD6hVNmNpXw1kcMPkbbt7s_W7nkjA';
-const SHEET_NAME = 'menacer';
+const SHEET_ID = '1BAsZeJRP0eYepRGD6hVNmNpXw1kcMPkbbt7s_W7nkjA';
+// Variantes plausibles du nom d'onglet, essayées dans l'ordre jusqu'à ce
+// que l'une d'elles renvoie des données (protège contre les écarts de
+// casse, d'accent ou d'espace entre le nom prévu et le nom réel de l'onglet).
+const SHEET_CANDIDATES = ["menacer", "Menacer", "MENACER"];
 // Colonnes lues par nom : titre | accroche | contenu | image
 // Une colonne vide est simplement ignorée à l'affichage, sans bloquer le reste.
 // ──────────────────────────────────────────────────────────────────────────
@@ -215,13 +223,35 @@ function paragraphs(text) {
     .join('');
 }
 
+async function fetchSheetJson(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  const res  = await fetch(url);
+  const text = await res.text();
+  const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/);
+  if (!match) return null;
+  const json = JSON.parse(match[1]);
+  if (json.status === 'error') return null;
+  return json;
+}
+
 async function loadData() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
   try {
-    const res  = await fetch(url);
-    const text = await res.text();
-    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1]);
-    const rows = json.table.rows || [];
+    let json = null;
+
+    for (const candidate of SHEET_CANDIDATES) {
+      try {
+        const result = await fetchSheetJson(candidate);
+        if (result && (result.table.rows || []).length > 0) {
+          json = result;
+          break;
+        }
+        // On garde en réserve une réponse valide même vide, au cas où aucune
+        // variante ne contient de lignes (onglet réellement vide).
+        if (result && !json) json = result;
+      } catch (e) { /* on essaie la variante suivante */ }
+    }
+
+    const rows = json?.table?.rows || [];
 
     const firstRow = rows[0]?.c?.map(c => (c?.v || '').toLowerCase().trim()) || [];
     const hasHeader = firstRow.includes('titre');
