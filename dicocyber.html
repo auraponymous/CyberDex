@@ -59,16 +59,21 @@
   }
 
   header h1::before { content: "> "; opacity: 0.7; }
-  header h1::after {
-    content: "_";
-    opacity: 0.6;
-    animation: blink 1s steps(1) infinite;
-  }
 
   header p {
     font-size: 0.78rem;
-    color: var(--c-muted);
+    color: var(--c-text);
     margin-top: 4px;
+    min-height: 1.15em;
+  }
+
+  .tagline-cursor {
+    display: inline-block;
+    width: 6px; height: 0.9em;
+    background: var(--c-text);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.9s steps(1) infinite;
   }
 
   .container {
@@ -395,7 +400,7 @@
 <header>
   <div class="container" style="padding-top:0;padding-bottom:0;">
     <h1><a class="crumb-home" href="index.html">LE_CYBERDEX</a><span class="crumb-sep">/</span><span id="homeLink" style="cursor:pointer;">LE DICO CYBER</span></h1>
-    <p id="lastUpdate">Chargement…</p>
+    <p id="lastUpdate"><span id="typedTagline">Chargement…</span><span class="tagline-cursor"></span></p>
   </div>
 </header>
 
@@ -496,8 +501,7 @@ async function loadData() {
     })).filter(r => r.terme);
 
     const count = ALL.length;
-    document.getElementById('lastUpdate').textContent =
-      `${count} termes · amendés régulièrement`;
+    startTaglineLoop(`${count} termes · amendés régulièrement`);
 
     markEmptyLetters();
 
@@ -731,6 +735,45 @@ document.getElementById('entries').addEventListener('click', e => {
 
 document.getElementById('entries').innerHTML = `<div class="state-msg">Chargement…</div>`;
 loadData();
+
+// Effet de frappe sur la baseline du header, en boucle :
+// écrit lentement -> reste affichée 5s -> s'efface -> se réaffiche -> etc.
+// Démarré une fois le nombre de termes connu (voir loadData).
+const taglineEl = document.getElementById('typedTagline');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function startTaglineLoop(tagline) {
+  if (reduceMotion) {
+    taglineEl.textContent = tagline;
+    return;
+  }
+  const TYPE_SPEED  = 45;
+  const ERASE_SPEED = 25;
+  const HOLD_TIME   = 5000;
+  const PAUSE_TIME  = 600;
+
+  function taglineLoop() {
+    let i = 0;
+    const typeInt = setInterval(() => {
+      i++;
+      taglineEl.textContent = tagline.slice(0, i);
+      if (i >= tagline.length) {
+        clearInterval(typeInt);
+        setTimeout(() => {
+          const eraseInt = setInterval(() => {
+            i--;
+            taglineEl.textContent = tagline.slice(0, i);
+            if (i <= 0) {
+              clearInterval(eraseInt);
+              setTimeout(taglineLoop, PAUSE_TIME);
+            }
+          }, ERASE_SPEED);
+        }, HOLD_TIME);
+      }
+    }, TYPE_SPEED);
+  }
+  taglineLoop();
+}
 </script>
 </body>
 </html>

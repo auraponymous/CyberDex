@@ -60,16 +60,21 @@
   }
 
   header h1::before { content: "> "; opacity: 0.7; }
-  header h1::after {
-    content: "_";
-    opacity: 0.6;
-    animation: blink 1s steps(1) infinite;
-  }
 
   header p {
     font-size: 0.78rem;
-    color: var(--c-muted);
+    color: var(--c-text);
     margin-top: 4px;
+    min-height: 1.15em;
+  }
+
+  .tagline-cursor {
+    display: inline-block;
+    width: 6px; height: 0.9em;
+    background: var(--c-text);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.9s steps(1) infinite;
   }
 
   .container {
@@ -80,13 +85,6 @@
     flex: 1;
     box-sizing: border-box;
   }
-
-  #countLine {
-    font-size: 0.75rem;
-    color: var(--c-muted);
-    margin-bottom: 1.1rem;
-  }
-  #countLine b { color: var(--c-neon); font-weight: 700; }
 
   /* Carte article */
   .article {
@@ -103,12 +101,29 @@
   .article:hover { border-left-color: var(--c-neon); }
   .article.expanded { border-left-color: var(--c-neon); }
 
+  .article-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+
   .article-title {
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--c-neon);
     letter-spacing: 0.3px;
   }
+
+  .article-chevron {
+    flex-shrink: 0;
+    color: var(--c-neon);
+    font-size: 0.7rem;
+    line-height: 1;
+    transition: transform 0.2s;
+  }
+
+  .article.expanded .article-chevron { transform: rotate(180deg); }
 
   .article-accroche {
     font-size: 0.82rem;
@@ -146,13 +161,6 @@
   .article-content p { margin-bottom: 0.8rem; }
   .article-content p:last-child { margin-bottom: 0; }
 
-  .toggle-hint {
-    font-size: 0.68rem;
-    color: var(--c-muted);
-    margin-top: 0.5rem;
-    letter-spacing: 0.2px;
-  }
-
   .state-msg {
     text-align: center;
     padding: 3rem 1rem;
@@ -185,12 +193,11 @@
 <header>
   <div class="container" style="padding-top:0;padding-bottom:0;">
     <h1><a class="crumb-home" href="index.html">LE_CYBERDEX</a><span class="crumb-sep">/</span>RED TEAM</h1>
-    <p>Profils et carrières des grands noms des hackeurs de l'ombre.</p>
+    <p><span id="typedTagline"></span><span class="tagline-cursor"></span></p>
   </div>
 </header>
 
 <div class="container">
-  <div id="countLine">chargement…</div>
   <div id="articles"></div>
 </div>
 
@@ -309,11 +316,6 @@ async function loadData() {
       image:    col(r, 'image'),
     })).filter(a => a.titre);
 
-    const countEl = document.getElementById('countLine');
-    countEl.innerHTML = articles.length
-      ? `<b>${articles.length}</b> fiche${articles.length > 1 ? 's' : ''} dans cette rubrique`
-      : '';
-
     const container = document.getElementById('articles');
 
     if (!articles.length) {
@@ -328,19 +330,20 @@ async function loadData() {
 
     container.innerHTML = articles.map((a, i) => `
       <div class="article" data-idx="${i}">
-        <div class="article-title">${escapeHtml(a.titre)}</div>
+        <div class="article-head">
+          <div class="article-title">${escapeHtml(a.titre)}</div>
+          <span class="article-chevron">▾</span>
+        </div>
         ${a.accroche ? `<div class="article-accroche">${escapeHtml(a.accroche)}</div>` : ''}
         <div class="article-body">
           ${a.image ? `<img class="article-image" src="${escapeHtml(a.image)}" alt="${escapeHtml(a.titre)}" onerror="this.remove()">` : ''}
           ${a.contenu ? `<div class="article-content">${paragraphs(a.contenu)}</div>` : ''}
         </div>
-        <div class="toggle-hint">[ cliquer pour ${a.contenu || a.image ? 'déplier / replier' : 'plus de détails'} ]</div>
       </div>
     `).join('');
 
   } catch (e) {
     console.error(e);
-    document.getElementById('countLine').textContent = '';
     document.getElementById('articles').innerHTML =
       `<div class="state-msg">Impossible de charger les données pour le moment.</div>`;
   }
@@ -353,6 +356,43 @@ document.getElementById('articles').addEventListener('click', e => {
   const item = e.target.closest('.article');
   if (item) item.classList.toggle('expanded');
 });
+
+// Effet de frappe sur la baseline du header, en boucle :
+// écrit lentement -> reste affichée 5s -> s'efface -> se réaffiche -> etc.
+const tagline = 'Profils et carrières des grands noms des hackeurs de l\'ombre.';
+const taglineEl = document.getElementById('typedTagline');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (reduceMotion) {
+  taglineEl.textContent = tagline;
+} else {
+  const TYPE_SPEED  = 45;
+  const ERASE_SPEED = 25;
+  const HOLD_TIME   = 5000;
+  const PAUSE_TIME  = 600;
+
+  function taglineLoop() {
+    let i = 0;
+    const typeInt = setInterval(() => {
+      i++;
+      taglineEl.textContent = tagline.slice(0, i);
+      if (i >= tagline.length) {
+        clearInterval(typeInt);
+        setTimeout(() => {
+          const eraseInt = setInterval(() => {
+            i--;
+            taglineEl.textContent = tagline.slice(0, i);
+            if (i <= 0) {
+              clearInterval(eraseInt);
+              setTimeout(taglineLoop, PAUSE_TIME);
+            }
+          }, ERASE_SPEED);
+        }, HOLD_TIME);
+      }
+    }, TYPE_SPEED);
+  }
+  taglineLoop();
+}
 </script>
 </body>
 </html>

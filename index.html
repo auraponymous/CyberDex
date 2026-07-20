@@ -66,11 +66,6 @@
   }
 
   header h1::before { content: "> "; opacity: 0.7; }
-  header h1::after {
-    content: "_";
-    opacity: 0.6;
-    animation: blink 1s steps(1) infinite;
-  }
 
   header p {
     font-size: 0.8rem;
@@ -129,28 +124,6 @@
     box-shadow: 0 0 0 1px rgba(0,255,157,0.15), 0 10px 40px rgba(0,255,157,0.12);
   }
 
-  .terminal-bar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0.6rem 0.9rem;
-    background: #0d1219;
-    border-bottom: 1px solid var(--c-border);
-  }
-
-  .terminal-dot {
-    width: 8px; height: 8px;
-    border-radius: 1px;
-    background: var(--c-border-hover);
-  }
-
-  .terminal-bar span.path {
-    margin-left: 10px;
-    font-size: 0.68rem;
-    color: var(--c-muted);
-    letter-spacing: 0.3px;
-  }
-
   .terminal-body {
     padding: 1.5rem 1.6rem 1.7rem;
     display: flex;
@@ -160,31 +133,19 @@
     flex-wrap: wrap;
   }
 
-  .terminal-left { flex: 1; min-width: 220px; }
+  .terminal-left {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
 
   .terminal-title {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--c-neon);
     letter-spacing: 0.3px;
-    margin-bottom: 0.6rem;
-  }
-
-  .terminal-line {
-    font-size: 0.86rem;
-    color: var(--c-text);
-    min-height: 1.3em;
-    white-space: pre;
-  }
-
-  .terminal-line .prompt { color: var(--c-neon-dim); }
-  .terminal-line .cursor {
-    display: inline-block;
-    width: 7px; height: 1em;
-    background: var(--c-neon);
-    margin-left: 2px;
-    vertical-align: text-bottom;
-    animation: blink 0.9s steps(1) infinite;
   }
 
   .terminal-right {
@@ -287,7 +248,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    header h1::after, .terminal-line .cursor { animation: none; opacity: 0.6; }
+    .tagline-cursor { animation: none; opacity: 0.6; }
   }
 </style>
 </head>
@@ -355,15 +316,11 @@
   </div>
 
   <a class="terminal-card" href="dicocyber.html" id="dicoCard">
-    <div class="terminal-bar">
-      <span class="terminal-dot"></span>
-      <span class="terminal-dot"></span>
-      <span class="terminal-dot"></span>
-      <span class="path">~/cyberdex/dico_cyber</span>
-    </div>
     <div class="terminal-body">
       <div class="terminal-left">
+        <span class="tile-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h7"/></svg></span>
         <div class="terminal-title">LE DICO CYBER</div>
+        <div class="tile-desc">Le glossaire de référence, terme par terme.</div>
       </div>
       <div class="terminal-right">
         <span class="cta-btn">[ OUVRIR_LE_DICO ]</span>
