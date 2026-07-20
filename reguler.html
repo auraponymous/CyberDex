@@ -88,11 +88,12 @@
 
   /* Carte article */
   .article {
+    position: relative;
     background: var(--c-surface);
     border: 1px solid var(--c-border);
     border-left: 2px solid var(--c-neon-dim);
     border-radius: 4px;
-    padding: 1rem 1.15rem;
+    padding: 1rem 2.75rem 1.35rem 1.15rem;
     margin-bottom: 0.7rem;
     cursor: pointer;
     transition: border-color 0.15s;
@@ -100,13 +101,6 @@
 
   .article:hover { border-left-color: var(--c-neon); }
   .article.expanded { border-left-color: var(--c-neon); }
-
-  .article-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.6rem;
-  }
 
   .article-title {
     font-size: 0.95rem;
@@ -116,12 +110,15 @@
   }
 
   .article-chevron {
-    flex-shrink: 0;
+    position: absolute;
+    right: 0.85rem;
+    bottom: 0.75rem;
     color: var(--c-neon);
-    font-size: 0.7rem;
     line-height: 1;
     transition: transform 0.2s;
   }
+
+  .article-chevron svg { display: block; }
 
   .article.expanded .article-chevron { transform: rotate(180deg); }
 
@@ -330,15 +327,13 @@ async function loadData() {
 
     container.innerHTML = articles.map((a, i) => `
       <div class="article" data-idx="${i}">
-        <div class="article-head">
-          <div class="article-title">${escapeHtml(a.titre)}</div>
-          <span class="article-chevron">▾</span>
-        </div>
+        <div class="article-title">${escapeHtml(a.titre)}</div>
         ${a.accroche ? `<div class="article-accroche">${escapeHtml(a.accroche)}</div>` : ''}
         <div class="article-body">
           ${a.image ? `<img class="article-image" src="${escapeHtml(a.image)}" alt="${escapeHtml(a.titre)}" onerror="this.remove()">` : ''}
           ${a.contenu ? `<div class="article-content">${paragraphs(a.contenu)}</div>` : ''}
         </div>
+        <span class="article-chevron"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-6 9z" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
       </div>
     `).join('');
 
