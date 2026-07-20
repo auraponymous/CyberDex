@@ -228,11 +228,12 @@
 
   /* Liste des mots (vue par lettre) */
   .word-list-item {
+    position: relative;
     background: var(--c-surface);
     border: 1px solid var(--c-border);
     border-left: 2px solid var(--c-neon-dim);
     border-radius: 4px;
-    padding: 0.85rem 1.1rem;
+    padding: 0.85rem 2.75rem 1.2rem 1.1rem;
     margin-bottom: 0.6rem;
     cursor: pointer;
     transition: border-color 0.15s;
@@ -271,6 +272,19 @@
   }
 
   .word-list-item.expanded .word-list-body { display: block; }
+
+  .word-chevron {
+    position: absolute;
+    right: 0.85rem;
+    bottom: 0.7rem;
+    color: var(--c-neon);
+    line-height: 1;
+    transition: transform 0.2s;
+  }
+
+  .word-chevron svg { display: block; }
+
+  .word-list-item.expanded .word-chevron { transform: rotate(180deg); }
 
   /* Entry card (recherche directe) */
   .entry {
@@ -326,7 +340,7 @@
   .field-content {
     font-size: 0.82rem;
     line-height: 1.6;
-    color: var(--c-muted);
+    color: var(--c-text);
     margin-bottom: 0.5rem;
   }
 
@@ -583,6 +597,7 @@ function showLetterList(letter) {
     <div class="word-list-item" data-idx="${i}">
       ${buildHeaderHtml(e).replace('entry-term', 'word-list-term').replace('entry-variante', 'word-list-variante').replace('entry-def-short', 'word-list-def')}
       <div class="word-list-body">${buildBodyHtml(e)}</div>
+      <span class="word-chevron"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-6 9z" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
     </div>
   `).join('');
 
